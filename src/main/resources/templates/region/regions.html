@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head :: head"></head>
+
+<body>
+
+<!-- Navbar -->
+<div th:replace="fragments/navbar :: navbar('regions')">Navbar here</div>
+<!-- EO: Navbar -->
+
+<div class="my-2 d-flex justify-content-center">
+    <h2>Welcome to the REGIONS board!</h2>
+</div>
+
+<div class="container">
+    <div th:object="${region}"
+         th:each="region: ${regions}"
+         class="my-3 border-secondary card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div class="col-10">
+                    <span th:text="${region.name}">Title</span>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title" th:if="${regions.size() == 0}" th:text="No jobs in this region"></h5>
+            <div th:object="${task}"
+            th:each="task: ${region.getTasks()}">
+                <p th:text="*{getName()}" class="card-text"></p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link crossorigin="anonymous"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+        rel="stylesheet"/>
+
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="container margins-top-bottom" th:fragment="events-navbar">
+
+  <div class="d-flex flex-row justify-content-between">
+
+    <div class="d-flex flex-row">
+      <!-- Previous -->
+      <div><a
+          th:href="@{/events/{year}/{month}(year=${previous.getYear()},month=${previous.getMonthValue()})}"
+          class="btn btn-primary">Previous</a></div>
+      <!-- EO: Previous -->
+
+      <!-- Next -->
+      <div class="margin-left"><a
+          th:href="@{/events/{year}/{month}(year=${next.getYear()},month=${next.getMonthValue()})}"
+          class="btn btn-primary">Next</a></div>
+      <!-- EO: Next -->
+    </div>
+
+    <div>
+      <!-- Choice plus go -->
+      <div class="justify-content-end">
+        <select
+            id="month"
+            name="month">
+          <option value="01" th:selected="${current.getMonthValue()}==1">JAN</option>
+          <option value="02" th:selected="${current.getMonthValue()}==2">FEB</option>
+          <option value="03" th:selected="${current.getMonthValue()}==3">MAR</option>
+          <option value="04" th:selected="${current.getMonthValue()}==4">APR</option>
+          <option value="05" th:selected="${current.getMonthValue()}==5">MAY</option>
+          <option value="06" th:selected="${current.getMonthValue()}==6">JUN</option>
+          <option value="07" th:selected="${current.getMonthValue()}==7">JUL</option>
+          <option value="08" th:selected="${current.getMonthValue()}==8">AUG</option>
+          <option value="09" th:selected="${current.getMonthValue()}==9">SEP</option>
+          <option value="10" th:selected="${current.getMonthValue()}==10">OCT</option>
+          <option value="11" th:selected="${current.getMonthValue()}==11">NOV</option>
+          <option value="12" th:selected="${current.getMonthValue()}==12">DEC</option>
+        </select>
+
+        <select
+            id="year"
+            name="month">
+          <option th:value="${current.getYear() - 1}"
+                  th:text="${current.getYear() - 1}">
+          </option>
+          <option th:value="${current.getYear()}"
+                  th:text="${current.getYear()}"
+                  selected>
+          </option>
+          <option th:value="${current.getYear() + 1}"
+                  th:text="${current.getYear() + 1}">
+          </option>
+        </select>
+
+        <button id="go" type="button" class="btn btn-primary">Go!</button>
+
+        <script>
+          $("#go").click(function () {
+            window.location.href = '/events/' + $("#year").val() + "/" + $("#month").val();
+          });
+        </script>
+      </div>
+      <!-- EO: Choice plus go -->
+    </div>
+  </div>
+
+  <hr/>
+
+</div>
+<!-- EO: Navbar -->
+
+</body>
+</html>

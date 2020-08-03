@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head :: head"></head>
+<body>
+<!-- Behaviour -->
+<script sec:authorize="hasRole('ROLE_ADMIN')">
+    $(document).on("click", ".open-announcement-delete-dialog", function () {
+        $("#deleteId").val($(this).data('id'));
+    });
+</script>
+<!-- EO: Behaviour-->
+
+<!-- Navbar -->
+<div th:replace="fragments/navbar :: navbar('announcements')">Navbar here</div>
+<!-- EO: Navbar -->
+
+<div class="my-2 d-flex justify-content-center">
+    <h2>Welcome to the announcement board!</h2>
+</div>
+
+<div class="container">
+    <div th:object="${announcement}"
+         th:each="announcement: ${announcements}"
+         class="my-3 border-secondary card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div class="col-10">
+                    <span th:text="*{title}">Title</span>
+                    <small>
+                        <em>
+                            (last updated on <span th:text="*{#temporals.format(updatedOn, 'dd-MM-yyyy HH:mm')}">1979-03-07</span>)
+                        </em>
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title"></h5>
+            <p th:text="*{description}" class="card-text"></p>
+        </div>
+        <div sec:authorize="hasRole('ROLE_ADMIN')">
+            <button type="button"
+                    class="open-announcement-delete-dialog btn btn-primary"
+                    data-toggle="modal"
+                    data-target="#deleteAnnouncementModal"
+                    th:data-id="*{id}">
+                <i class="fas fa-trash mx-1"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div sec:authorize="hasRole('ROLE_ADMIN')">
+    <a class="new-button btn btn-primary rounded-circle" th:href="@{/announcements/new}" role="button">
+        <i class="fas fa-plus"></i>
+    </a>
+</div>
+
+<div sec:authorize="hasRole('ROLE_ADMIN')" th:replace="announcement/delete :: delete-announcement">
+    Modal dialog for delete
+</div>
+
+<!-- Bootstap JS -->
+<div th:replace="fragments/bootstrap-js :: bootstrap-js"></div>
+<!-- EO: Bootstap JS -->
+
+</body>
+</html>

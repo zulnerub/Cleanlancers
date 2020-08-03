@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head"></head>
+<body>
+
+<!-- Navbar -->
+<div th:replace="fragments/navbar :: navbar('events')">Navbar here</div>
+<!-- EO: Navbar -->
+
+<div class="container">
+  <form th:action="@{/events/save}" method="post" th:object="${formData}">
+
+    <!-- Title -->
+    <div class="form-group">
+      <label for="eventTitle">Title</label>
+      <input type="text"
+             placeholder="Title"
+             class="form-control"
+             th:errorclass="is-invalid"
+             id="eventTitle"
+             th:field="*{title}"/>
+      <div class="invalid-feedback">
+        Please fill in a title.
+      </div>
+    </div>
+    <!-- EO: Title -->
+
+    <!-- Description -->
+    <div class="form-group">
+      <label for="eventDescription">Description</label>
+      <textarea class="form-control"
+                placeholder="Description"
+                th:errorclass="is-invalid"
+                id="eventDescription"
+                rows="5"
+                th:field="*{description}"></textarea>
+      <div class="invalid-feedback">
+        The description should be longer than 10 characters.
+      </div>
+    </div>
+    <!-- EO: Description -->
+
+    <!-- Event type -->
+    <div class="form-group">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="eventType">Event type</label>
+        </div>
+        <select
+            th:errorclass="is-invalid"
+            id="eventType"
+            name="eventType">
+          <option th:each="anEnventType : ${eventTypes}"
+                  th:value="${anEnventType}"
+                  th:text="${anEnventType}"
+                  th:selected="${anEnventType}==*{eventType}"></option>
+        </select>
+        <div class="invalid-feedback">
+          Event type should be specified.
+        </div>
+      </div>
+    </div>
+    <!-- EO: Event type -->
+
+    <!-- Date -->
+    <div class="form-group">
+      <input type="datetime-local"
+             id="eventTime"
+             th:field="*{eventTime}"
+             th:errorclass="is-invalid"
+             name="eventTime">
+      <div class="invalid-feedback">
+        Event type should be specified and should be in the future.
+      </div>
+    </div>
+    <!-- EO: Date -->
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+
+<!-- Bootstap JS -->
+<div th:replace="fragments/bootstrap-js :: bootstrap-js"></div>
+<!-- EO: Bootstap JS -->
+
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head :: head"></head>
+<body>
+
+<!-- Navbar -->
+<div th:replace="fragments/navbar :: navbar('events')">Navbar here</div>
+<!-- EO: Navbar -->
+
+<!-- Events Navbar -->
+<div th:replace="event/events-navbar :: events-navbar">Events Navbar here</div>
+<!-- EO: Events Navbar -->
+
+<div class="container">
+
+  <!-- Weekdays header -->
+  <div class="row">
+    <div class="centered-text small col-sm">MON</div>
+    <div class="centered-text small col-sm">TUE</div>
+    <div class="centered-text small col-sm">WED</div>
+    <div class="centered-text small col-sm">THU</div>
+    <div class="centered-text small col-sm">FRI</div>
+    <div class="centered-text small col-sm">SAT</div>
+    <div class="centered-text small col-sm">SUN</div>
+  </div>
+  <!-- EO: Weekdays header -->
+
+  <!-- Starts the week row -->
+  <div th:each="week: ${weeks}" class="row">
+    <div th:each="day: ${week.getDays()}"
+         class="col-sm">
+      <!-- Empty square -->
+      <div th:if="${day.isEmpty()}">
+        &nbsp;
+      </div>
+      <!-- EO: Empty square -->
+
+      <!-- Day -->
+      <div class="margins-top-bottom border" th:unless="${day.isEmpty()}">
+        <div
+            th:classappend="${!day.getEvents().isEmpty()} ? bg-primary"
+            class="centered-text border-bottom"
+            th:text="${day.getDay()}">Day 1
+        </div>
+
+        <!-- Events -->
+        <div th:if="${day.getEvents().isEmpty()}">
+          &nbsp;
+        </div>
+
+        <div th:unless="${day.getEvents().isEmpty()}">
+          <div th:each="event: ${day.getEvents()}">
+            <div class="small">
+              <em th:text="${#dates.format(event.getEventTimeAsDate(), 'HH:mm')}"></em>
+              <span data-toggle="tooltip"
+                    th:title="${event.getDescription()}"
+                    th:text="${event.getTitle()}">
+              </span>
+            </div>
+          </div>
+        </div>
+        <!-- EO: Events -->
+
+      </div>
+      <!-- EO: Day -->
+    </div>
+  </div>
+  <!-- EO: Ends the week row -->
+</div>
+
+<div sec:authorize="hasRole('ADMIN')">
+  <a class="new-button btn btn-primary rounded-circle" th:href="@{/events/new}" role="button">
+    <i class="fas fa-plus"></i>
+  </a>
+</div>
+<!-- Bootstap JS -->
+<div th:replace="fragments/bootstrap-js :: bootstrap-js"></div>
+<!-- EO: Bootstap JS -->
+
+<!-- Enable tooltips -->
+<script>
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+</script>
+
+</body>
+</html>

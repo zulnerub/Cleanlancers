@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:include="~{/fragments/head}"></th:block>
+</head>
+
+<body>
+
+<!-- Navbar -->
+<div th:replace="fragments/navbar :: navbar('announcements')">Navbar here</div>
+<!-- EO: Navbar -->
+
+<div class="container ">
+
+    <div class="container mt-lg-5 bg-transparent h-100">
+        <h1 class="w-100 text-dark text-center">Register</h1>
+    </div>
+    <!--    <div class="row tm-mt-big">-->
+    <!--        <div class="col-12 mx-auto tm-login-col">-->
+    <!--            <div class="bg-white tm-block">-->
+    <!--                <div class="row mt-2">-->
+    <div class="col-12">
+        <form th:action="@{/users/register}" th:method="POST"
+              th:object="${userRegisterDTO}" class="tm-login-form">
+
+            <div class="input-group mt-3">
+                <label for="email" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Email</label>
+                <input th:field="*{email}" name="email" type="email" class="form-control validate"
+                       id="email"
+                       placeholder="Enter email">
+
+            </div>
+            <th:block th:each="e : ${#fields.errors('email')}">
+                <div class="mx-auto">
+                    <small th:text="${e}" class="text-danger"></small>
+                </div>
+            </th:block>
+
+            <div class="input-group mt-3">
+                <label for="password" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Password</label>
+                <input th:field="*{password}" name="password" type="password" class="form-control validate"
+                       id="password" placeholder="Enter password">
+                <th:block th:each="e : ${#fields.errors('password')}">
+                    <div class="mx-auto">
+                        <small th:text="${e}" class="text-danger"></small>
+                    </div>
+                </th:block>
+            </div>
+            <div class="input-group mt-3">
+                <label for="confirmPassword" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Confirm
+                    Password</label>
+                <input th:field="*{confirmPassword}" name="confirmPassword" type="password"
+                       class="form-control validate"
+                       id="confirmPassword" placeholder="Confirm password">
+                <th:block th:if="${matching == false}">
+                    <div class="mx-auto">
+                        <small class="text-danger">Passwords doesn't match'</small>
+                    </div>
+                </th:block>
+            </div>
+
+            <div class="input-group mt-3">
+                <label for="firstName" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">First name</label>
+                <input th:field="*{firstName}" name="firstName" type="text" class="form-control validate"
+                       id="firstName"
+                       placeholder="Enter first name">
+
+            </div>
+            <th:block th:each="e : ${#fields.errors('firstName')}">
+                <div class="mx-auto">
+                    <small th:text="${e}" class="text-danger"></small>
+                </div>
+            </th:block>
+
+            <div class="input-group mt-3">
+                <label for="lastName" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Last name</label>
+                <input th:field="*{lastName}" name="lastName" type="text" class="form-control validate"
+                       id="lastName"
+                       placeholder="Enter last name">
+
+            </div>
+            <th:block th:if="${incorrectRole == true}">
+                <div class="mx-auto">
+                    <small th:text="'Please state your needs'" class="text-danger"></small>
+                </div>
+            </th:block>
+
+            <div class="input-group mt-3">
+                <label for="role" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">What do you need ?</label>
+                <select th:field="*{role}" name="role" id="role">
+                    <option th:value="null" th:text="'Please state your bussiness'"></option>
+                    <option th:value="'ROLE_CLIENT'" th:text="'I seek cleaners.'"></option>
+                    <option th:value="'ROLE_CLEANER'" th:text="'I seek work.'"></option>
+                </select>
+            </div>
+            <th:block th:each="e : ${#fields.errors('role')}">
+                <div class="mx-auto">
+                    <small th:text="${e}" class="text-danger"></small>
+                </div>
+            </th:block>
+
+
+            <div class="input-group mt-3">
+                <button type="submit" class="btn btn-primary d-inline-block mx-auto">Register</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--</div>-->
+<footer class="row">
+    <div class="col-12 container-fluid text-right font-weight-light">
+        <p class="d-inline-block tm-bg-black text-white py-2 px-4">
+            &copy; Spring Team 2020
+        </p>
+    </div>
+</footer>
+</body>
+
+</html>

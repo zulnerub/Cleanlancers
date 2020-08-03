@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head :: head">
+    <title>Cleanlancers</title>
+</head>
+<body>
+
+<!-- Bootstrap JS -->
+<div th:replace="fragments/bootstrap-js :: bootstrap-js"></div>
+<!-- EO: Bootstrap JS -->
+<div sec:authorize="hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN')" th:replace="task/delete :: delete-task">
+    Modal dialog for delete
+</div>
+
+
+<div sec:authorize="hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN')" th:replace="comment/add :: add-comment">
+    Modal for creating a comment
+</div>
+
+<div sec:authorize="hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN')" th:replace="comment/reply :: add-reply">
+    Modal for creating a reply
+</div>
+
+<input type="hidden" id="hasError" th:value="${commentError}"/>
+<input type="hidden" id="hasResponseError" th:value="${responseError}"/>
+<!-- Behaviour -->
+
+<script sec:authorize="hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN')">
+    window.onload = function() {
+
+        let hasCommentError = $("#hasError").val();
+        let hasResponseError = $("#hasResponseError").val();
+        console.log(hasCommentError);
+        console.log(hasResponseError);
+
+
+        if (hasCommentError === 'true') {
+            $("#addCommentModal").modal('toggle');
+        }
+        if (hasResponseError === 'true'){
+            $("#addCommentReplyModal").modal('toggle');
+        }
+
+        $(document).on("click", ".open-delete-dialog", function () {
+            $("#deleteId").val($(this).data('id'));
+        });
+
+        $(document).on("click", ".add-task-comment", function () {
+            $("#taskId").val($(this).data('id'));
+        })
+
+        $(document).on("click", ".add-task-comment-reply", function () {
+            $("#taskCommentId").val($(this).data('comment-id'));
+        })
+
+        $(document).on("click", ".show-task-comments", function () {
+            let commentsDiv = document.getElementById("comment-" + $(this).data('id'));
+            if (commentsDiv.style.display === "none") {
+                commentsDiv.style.display = "block";
+            } else {
+                commentsDiv.style.display = "none";
+            }
+        })
+
+        $(document).on("click", ".show-comment-reply", function () {
+            let commentReplyDiv = document.getElementById("comment-reply-" + $(this).data('comment-id'));
+            if (commentReplyDiv.style.display === "none") {
+                commentReplyDiv.style.display = "block";
+            } else {
+                commentReplyDiv.style.display = "none";
+            }
+        })
+    }
+
+</script>
+<!-- EO: Behaviour-->
+
+
+<!-- Navbar -->
+<div th:replace="fragments/navbar :: navbar('tasks')">Navbar here</div>
+<!-- EO: Navbar -->
+<!-- Page Content -->
+<div class="container">
+    <!-- Heading -->
+    <h1 class="my-4" th:if="${foundTasks == null}">You have no tasks
+        <small>There are no tasks with these parameters</small>
+    </h1>
+
+    <hr>
+    <form th:action="@{/tasks}" th:method="post" th:object="${searchForm}">
+        <table>
+            <tr>
+                <th>Search by task name</th>
+                <th>Search by client first name</th>
+                <th>Search by client last name</th>
+                <th></th>
+            </tr>
+            <tr>
+                <td>
+                    <input name="nameLike" id="nameLike" th:value="*{nameLike}" type="text"
+                           class="form-control validate"
+                           placeholder="Tasks name">
+                </td>
+                <td>
+                    <input name="clientFirstName" id="clientFirstName" th:value="*{clientFirstName}" type="text"
+                           class="form-control validate"
+                           placeholder="Client first name">
+                </td>
+                <td>
+                    <input name="clientSecondName" id="clientSecondName" th:value="*{clientSecondName}" type="text"
+                           class="form-control validate"
+                           placeholder="Client last name">
+                </td>
+                <td>
+                    <div class="input-group">
+                        <button type="submit" class="btn btn-primary d-inline-block mx-auto">Search</button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <hr>
+    <!--    Create button-->
+    <div sec:authorize="hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN')">
+        <a class="new-button btn btn-primary rounded-circle" th:href="@{/tasks/new}" role="button">
+            <i class="fas fa-plus"></i>
+        </a>
+    </div>
+    <!-- /create button -->
+
+    <div th:unless="${foundTasks == null}">
+        <h1 class="col-lg-10" th:unless="${foundTasks.isEmpty()}">Your tasks are listed below</h1>
+        <!-- Task Row -->
+        <table th:each="task : ${foundTasks}">
+            <tr th:object="${task}">
+                <td>
+                    <h3 th:text="${task.name}" class="my-3">Project Description</h3>
+                    <p th:text="${task.client.getEmail()}"></p>
+                    <h6 class="my-3">Project Details</h6>
+                </td>
+                <td>
+                    <!--            SHow/hide comments button-->
+                    <div th:unless="${task.comments.isEmpty()}"
+                         sec:authorize="hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN')">
+                        <button type="button"
+                                class="show-task-comments btn btn-primary"
+                                th:data-id="${task.id}">
+                            Show Comments
+                            <i class="fas fa-fa mx-1"></i>
+                        </button>
+                    </div>
+                    <!--  / show/hide comments-->
+                </td>
+                <td>
+                    <!--                    Add comment-->
+                    <div>
+                        <button type="button"
+                                class="add-task-comment btn btn-primary"
+                                data-toggle="modal"
+                                data-target="#addCommentModal"
+                                th:data-id="${task.id}">
+                            Comment
+                            <i class="fas fa-fa mx-1"></i>
+                        </button>
+                    </div>
+                    <!--                    / Add comment-->
+                </td>
+                <td>
+                    <div sec:authorize="hasRole('CLIENT') || hasRole('ADMIN')">
+                        <button type="button"
+                                class="open-delete-dialog btn btn-primary"
+                                data-toggle="modal"
+                                data-target="#deleteTaskModal"
+                                th:data-id="${task.id}">
+                            <i class="fas fa-trash mx-1"></i>
+                        </button>
+                    </div>
+                </td>
+                <td>
+
+                </td>
+            </tr>
+            <tr th:object="${task}">
+                <td colspan="4">
+                    <!--            comments div-->
+                    <div th:id="comment- + ${task.getId()}" style="display: none">
+                        <div class="card" th:each="taskComment : ${task.comments}">
+                            <div class="card-body" th:object="${taskComment}">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <img src="https://image.ibb.co/jw55Ex/def_face.jpg"
+                                             class="img img-rounded img-fluid"/>
+                                        <p class="text-secondary text-center" th:text="${taskComment.createdOn}">Data
+                                            created</p>
+                                    </div>
+                                    <div>
+                                        <p class="float-left"
+                                           th:text="${taskComment.author.firstName + ' ' + taskComment.author.lastName}">
+                                            <strong>Creator</strong>
+                                        </p>
+                                        <br>
+                                        <hr>
+                                        <br>
+                                        <p th:text="${taskComment.description}">Description</p>
+
+                                        <!--                                        <p>-->
+                                        <!--                                            <a class="float-right btn btn-outline-primary ml-2"> <i class="fa fa-reply"></i>Reply</a>-->
+                                        <!--                    Add comment-->
+                                        <div>
+                                            <button type="button"
+                                                    class="add-task-comment-reply btn btn-primary"
+                                                    data-toggle="modal"
+                                                    data-target="#addCommentReplyModal"
+                                                    th:data-comment-id="${taskComment.id}">
+                                                Comment
+                                                <i class="fas fa-fa mx-1"></i>
+                                            </button>
+                                        </div>
+                                        <!--                    / Add comment-->
+                                        <!--                                        </p>-->
+
+                                        <div th:unless="${taskComment.responses.isEmpty()}"
+                                             sec:authorize="hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN')">
+                                            <button type="button"
+                                                    class="show-comment-reply btn btn-primary"
+                                                    th:data-comment-id="${taskComment.id}">
+                                                Show Replies
+                                                <i class="fas fa-fa mx-1"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card card-inner" th:id="comment-reply- + ${taskComment.id}"
+                                     style="display: none">
+                                    <div class="card-body" th:each="response : ${taskComment.responses}">
+                                        <div class="row" th:object="${response}">
+                                            <div class="col-md-10">
+                                                <img src="https://image.ibb.co/jw55Ex/def_face.jpg"
+                                                     class="img img-rounded img-fluid"/>
+                                                <p class="text-secondary text-center" th:text="${response.createdOn}">
+                                                    Data
+                                                    created</p>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <p><a href="https://maniruzzaman-akash.blogspot.com/p/contact.html"
+                                                      th:text="${response.author.firstName + ' ' + response.author.lastName}"><strong>Creator
+                                                </strong></a></p>
+                                                <p th:text="${response.description}">Description</p>
+                                                <p>
+                                                    <a class="float-right btn btn-outline-primary ml-2"> <i
+                                                            class="fa fa-reply"></i>Reply</a>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--  /comments div-->
+                </td>
+            </tr>
+        </table>
+        <!-- /.row -->
+    </div>
+
+</div>
+
+
+
+<!-- /.container -->
+</body>
+</html>

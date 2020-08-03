@@ -1,0 +1,30 @@
+
+
+
+
+<!--// let hasError = $("#hasError").val();-->
+<!--// // let errorTaskId = $("#errorTaskId").val();-->
+<!--// // let errorDescription = $("#errorDescription").val();-->
+<!--//-->
+<!--// if (hasError) {-->
+<!--//     $('#addCommentModal').modal('show');-->
+<!--//     // $("#taskId").val(errorTaskId);-->
+<!--//     // $("#commentDescription").val(errorDescription);-->
+<!--// }-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--<input type="hidden" id="hasError" th:value="${errorAddComment.hasError}" />-->
+<!--<input type="hidden" id="errorTaskId" th:value="${errorAddComment.taskId}"/>-->
+<!--<input type="hidden" id="errorDescription" th:value="${errorAddComment.description}"/>-->

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head"></head>
+<body>
+
+
+<div class="container-fluid">
+    <div class="row no-gutter">
+        <div class="d-none d-md-flex col-md-4 col-lg-6 bg-image"></div>
+        <div class="col-md-8 col-lg-6">
+            <div class="login d-flex align-items-center py-5">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-9 col-lg-8 mx-auto">
+                            <h3 class="login-heading mb-4">Welcome back!</h3>
+                            <form th:action="@{/login/authenticate}" method="post">
+                                <div class="form-label-group">
+                                    <input name="username"
+                                           type="email"
+                                           placeholder="Email"
+                                           class="form-control"
+                                           id="userEmail" required autofocus>
+                                    <label for="userEmail">Email address</label>
+                                </div>
+
+                                <div class="form-label-group">
+                                    <input name="password"
+                                           type="password"
+                                           placeholder="Password"
+                                           class="form-control"
+                                           id="userPassword" required>
+                                    <label for="userPassword">Password</label>
+                                </div>
+
+                                <div class="custom-control custom-checkbox mb-3">
+                                    <input type="checkbox" class="custom-control-input" id="rememberMe">
+                                    <label class="custom-control-label" for="rememberMe">Remember me</label>
+                                </div>
+                                <button class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2"
+                                        type="submit">Login
+                                </button>
+                                <a th:href="@{/users/register}" class="btn btn-lg btn-block text-uppercase font-weight-bold mb-2" type="submit">
+                                    Register
+                                </a>
+
+                                <div class="text-center">
+                                    <a class="small" href="#">Forgot password?</a></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--<div class="container center">-->
+<!--    &lt;!&ndash; FACEBOOK SIGNIN &ndash;&gt;-->
+<!--    <div class="card">-->
+<!--        <article class="card-body">-->
+<!--            <a href="#" class="float-right btn btn-outline-primary">Sign up</a>-->
+<!--            <h4 class="card-title mb-4 mt-1">Sign in</h4>-->
+<!--            <p>-->
+<!--                <a th:href="@{/oauth2/authorization/facebook}"-->
+<!--                   class="btn btn-block btn-outline-primary">-->
+<!--                    <i class="fab fa-facebook-f"></i>-->
+<!--                    Login via facebook-->
+<!--                </a>-->
+<!--            </p>-->
+<!--            <hr>-->
+<!--            <form th:action="@{/login/authenticate}" method="post">-->
+<!--                <div class="form-group">-->
+<!--                    <label for="userEmail">Email</label>-->
+<!--                    <input-->
+<!--                            name="username"-->
+<!--                            type="email"-->
+<!--                            placeholder="Email"-->
+<!--                            class="form-control"-->
+<!--                            id="userEmail"/>-->
+<!--                </div> &lt;!&ndash; form-group// &ndash;&gt;-->
+<!--                <div class="form-group">-->
+<!--                    <label for="userPassword">Password</label>-->
+<!--                    <input-->
+<!--                            name="password"-->
+<!--                            type="password"-->
+<!--                            placeholder="Password"-->
+<!--                            class="form-control"-->
+<!--                            id="userPassword"/>-->
+<!--                </div> &lt;!&ndash; form-group// &ndash;&gt;-->
+<!--                <div class="row">-->
+<!--                    <div class="col-md-6">-->
+<!--                        <div class="form-group">-->
+<!--                            <button type="submit" class="btn btn-primary btn-block">Login</button>-->
+<!--                        </div> &lt;!&ndash; form-group// &ndash;&gt;-->
+<!--                    </div>-->
+<!--                    <div class="col-md-6 text-right">-->
+<!--                        <a class="small" href="#">Forgot password?</a>-->
+<!--                    </div>-->
+<!--                </div> &lt;!&ndash; .row// &ndash;&gt;-->
+<!--            </form>-->
+<!--        </article>-->
+<!--    </div> &lt;!&ndash; card.// &ndash;&gt;-->
+
+<!--    &lt;!&ndash; Demo credentials &ndash;&gt;-->
+<!--    <div class="container">-->
+<!--        A user and password pairs that you may use:-->
+<!--        <li>lucho@example.com/topsecret (for admin user)</li>-->
+<!--        <li>user@example.com/topsecret (for normal user)</li>-->
+<!--    </div>-->
+<!--    &lt;!&ndash; EO: Demo credentials &ndash;&gt;-->
+
+    <!-- Bootstap JS -->
+    <div th:replace="fragments/bootstrap-js :: bootstrap-js"></div>
+    <!-- EO: Bootstap JS -->
+</div>
+</body>
+</html>
