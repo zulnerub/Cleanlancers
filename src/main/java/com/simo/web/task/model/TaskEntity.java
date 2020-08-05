@@ -4,10 +4,6 @@ import com.simo.web.comment.model.CommentEntity;
 import com.simo.web.common.model.BaseEntity;
 import com.simo.web.region.model.RegionEntity;
 import com.simo.web.user.model.UserEntity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -94,15 +90,5 @@ public class TaskEntity extends BaseEntity {
         this.comments = comments;
         return this;
     }
-
-    //    public void addComment(CommentEntity comment) {
-//        comments.add(comment);
-//        comment.setTask(this);
-//    }
-//
-//    public void removeComment(CommentEntity comment) {
-//        comments.remove(comment);
-//        comment.setTask(null);
-//    }
 
 }

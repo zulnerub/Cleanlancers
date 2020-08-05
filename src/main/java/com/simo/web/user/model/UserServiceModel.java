@@ -2,7 +2,7 @@ package com.simo.web.user.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.simo.web.comment.model.CommentEntity;
-import com.simo.web.comment.model.ResponseEntity;
+import com.simo.web.response.model.ResponseEntity;
 import com.simo.web.task.model.TaskEntity;
 import lombok.Data;
 

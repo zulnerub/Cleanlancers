@@ -1,6 +1,5 @@
 package com.simo.web.common.model;
 
-
 import javax.persistence.*;
 
 @MappedSuperclass

@@ -1,9 +1,7 @@
 package com.simo.web.announcement.web;
 
-import com.simo.web.announcement.AnnouncementService;
-import com.simo.web.announcement.model.AnnouncementDTO;
-import com.simo.web.region.model.RegionEntity;
-import com.simo.web.task.model.RegisterTaskDTO;
+import com.simo.web.announcement.model.AnnouncementRegisterDTO;
+import com.simo.web.announcement.service.AnnouncementServiceImpl;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,15 +10,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @Controller
 @RequestMapping("/announcements")
 public class AnnouncementController {
 
-    private final AnnouncementService announcementService;
+    private final AnnouncementServiceImpl announcementService;
 
-    public AnnouncementController(AnnouncementService announcementService) {
+    public AnnouncementController(AnnouncementServiceImpl announcementService) {
         this.announcementService = announcementService;
     }
 
@@ -35,14 +32,14 @@ public class AnnouncementController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/new")
-    public String newTask(Model model, AnnouncementDTO announcementDTO ){
+    public String newTask(Model model, AnnouncementRegisterDTO announcementRegisterDTO){
 
-        AnnouncementDTO formData;
+        AnnouncementRegisterDTO formData;
 
         if (model.containsAttribute("formData")) {
-            formData = (AnnouncementDTO) model.getAttribute("formData");
+            formData = (AnnouncementRegisterDTO) model.getAttribute("formData");
         }else{
-            formData = new AnnouncementDTO();
+            formData = new AnnouncementRegisterDTO();
         }
 
         model.addAttribute("formData", formData);
@@ -52,12 +49,12 @@ public class AnnouncementController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/save")
-    public String save(@Valid @ModelAttribute("formData") AnnouncementDTO announcementDTO,
+    public String save(@Valid @ModelAttribute("formData") AnnouncementRegisterDTO announcementRegisterDTO,
                        BindingResult bindingResult,
                        RedirectAttributes redirectAttributes){
 
         if (bindingResult.hasErrors()){
-            redirectAttributes.addFlashAttribute("formData", announcementDTO);
+            redirectAttributes.addFlashAttribute("formData", announcementRegisterDTO);
             redirectAttributes
                     .addFlashAttribute(BindingResult.MODEL_KEY_PREFIX + "formData",
                             bindingResult);
@@ -65,7 +62,7 @@ public class AnnouncementController {
             return "redirect:/announcements/new";
         }
 
-        announcementService.createOrUpdateAnnouncement(announcementDTO);
+        announcementService.createOrUpdateAnnouncement(announcementRegisterDTO);
 
         return "redirect:/announcements";
     }

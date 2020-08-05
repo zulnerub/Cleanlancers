@@ -16,11 +16,11 @@
 
 //package com.simo.web.task.web;
 //
-//import com.simo.web.comment.CommentServiceImpl;
+//import com.simo.web.comment.service.CommentServiceImpl;
 //import com.simo.web.comment.model.CommentAddDTO;
-//import com.simo.web.comment.model.CommentMapper;
+//import com.simo.web.comment.model.mapper.CommentMapper;
 //import com.simo.web.comment.model.CommentServiceDTO;
-//import com.simo.web.region.RegionService;
+//import com.simo.web.region.service.RegionService;
 //import com.simo.web.region.model.RegionEntity;
 //import com.simo.web.task.TaskService;
 //import com.simo.web.task.model.RegisterTaskDTO;
@@ -45,11 +45,11 @@
 //public class back {
 //    package com.simo.web.task.web;
 //
-//import com.simo.web.comment.CommentServiceImpl;
+//import com.simo.web.comment.service.CommentServiceImpl;
 //import com.simo.web.comment.model.CommentAddDTO;
-//import com.simo.web.comment.model.CommentMapper;
+//import com.simo.web.comment.model.mapper.CommentMapper;
 //import com.simo.web.comment.model.CommentServiceDTO;
-//import com.simo.web.region.RegionService;
+//import com.simo.web.region.service.RegionService;
 //import com.simo.web.region.model.RegionEntity;
 //import com.simo.web.task.TaskService;
 //import com.simo.web.task.model.RegisterTaskDTO;

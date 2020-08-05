@@ -26,21 +26,31 @@
 
             <div class="input-group mt-3">
                 <label for="email" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Email</label>
-                <input th:field="*{email}" name="email" type="email" class="form-control validate"
+                <input th:field="*{email}"
+                       name="email"
+                       type="email"
+                       class="form-control validate"
+                       th:errorclass="is-invalid"
                        id="email"
                        placeholder="Enter email">
-
+                <br>
+                <th:block th:each="e : ${#fields.errors('email')}">
+                    <div class="mx-auto">
+                        <small th:text="${e}" class="text-danger"></small>
+                    </div>
+                </th:block>
             </div>
-            <th:block th:each="e : ${#fields.errors('email')}">
-                <div class="mx-auto">
-                    <small th:text="${e}" class="text-danger"></small>
-                </div>
-            </th:block>
 
             <div class="input-group mt-3">
                 <label for="password" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Password</label>
-                <input th:field="*{password}" name="password" type="password" class="form-control validate"
-                       id="password" placeholder="Enter password">
+                <input th:field="*{password}"
+                       name="password"
+                       type="password"
+                       class="form-control validate"
+                       th:errorclass="is-invalid"
+                       id="password"
+                       placeholder="Enter password">
+                <br>
                 <th:block th:each="e : ${#fields.errors('password')}">
                     <div class="mx-auto">
                         <small th:text="${e}" class="text-danger"></small>
@@ -50,55 +60,74 @@
             <div class="input-group mt-3">
                 <label for="confirmPassword" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Confirm
                     Password</label>
-                <input th:field="*{confirmPassword}" name="confirmPassword" type="password"
-                       class="form-control validate"
-                       id="confirmPassword" placeholder="Confirm password">
-                <th:block th:if="${matching == false}">
+                <input th:field="*{confirmPassword}"
+                       name="confirmPassword"
+                       type="password"
+                       class="form-control"
+                       th:errorclass="is-invalid"
+                       id="confirmPassword"
+                       placeholder="Confirm password">
+                <br>
+                <th:block th:each="e : ${#fields.errors('confirmPassword')}">
                     <div class="mx-auto">
-                        <small class="text-danger">Passwords doesn't match'</small>
+                        <small th:text="${e}" class="text-danger"></small>
                     </div>
                 </th:block>
             </div>
 
             <div class="input-group mt-3">
                 <label for="firstName" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">First name</label>
-                <input th:field="*{firstName}" name="firstName" type="text" class="form-control validate"
+                <input th:field="*{firstName}"
+                       name="firstName"
+                       type="text"
+                       class="form-control validate"
+                       th:errorclass="is-invalid"
                        id="firstName"
                        placeholder="Enter first name">
-
+                <br>
+                <th:block th:each="e : ${#fields.errors('firstName')}">
+                    <div class="mx-auto">
+                        <p><small th:text="${e}" class="text-danger"></small></p>
+                    </div>
+                </th:block>
             </div>
-            <th:block th:each="e : ${#fields.errors('firstName')}">
-                <div class="mx-auto">
-                    <small th:text="${e}" class="text-danger"></small>
-                </div>
-            </th:block>
 
             <div class="input-group mt-3">
                 <label for="lastName" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Last name</label>
-                <input th:field="*{lastName}" name="lastName" type="text" class="form-control validate"
+                <input th:field="*{lastName}"
+                       name="lastName"
+                       type="text"
+                       class="form-control validate"
+                       th:errorclass="is-invalid"
                        id="lastName"
                        placeholder="Enter last name">
-
+                <br>
+                <th:block th:each="e : ${#fields.errors('lastName')}">
+                    <div class="mx-auto">
+                        <small th:text="${e}" class="text-danger"></small>
+                    </div>
+                </th:block>
             </div>
-            <th:block th:if="${incorrectRole == true}">
-                <div class="mx-auto">
-                    <small th:text="'Please state your needs'" class="text-danger"></small>
-                </div>
-            </th:block>
 
             <div class="input-group mt-3">
-                <label for="role" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">What do you need ?</label>
-                <select th:field="*{role}" name="role" id="role">
+                <label for="role" class="col-xl-4 col-lg-6 col-md-6 col-sm-6 col-form-label">What do you
+                    need ?</label>
+                <select th:field="*{role}"
+                        name="role"
+                        id="role"
+                        class="form-control validate"
+                        th:class="is-invalid">
                     <option th:value="null" th:text="'Please state your bussiness'"></option>
                     <option th:value="'ROLE_CLIENT'" th:text="'I seek cleaners.'"></option>
                     <option th:value="'ROLE_CLEANER'" th:text="'I seek work.'"></option>
                 </select>
+
+                <th:block th:each="e : ${#fields.errors('role')}">
+                    <div class="mx-auto">
+                        <small th:text="${e}" class="text-danger"></small>
+                    </div>
+                </th:block>
             </div>
-            <th:block th:each="e : ${#fields.errors('role')}">
-                <div class="mx-auto">
-                    <small th:text="${e}" class="text-danger"></small>
-                </div>
-            </th:block>
 
 
             <div class="input-group mt-3">

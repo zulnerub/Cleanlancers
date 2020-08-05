@@ -3,8 +3,7 @@ package com.simo.web;
 
 import com.simo.web.announcement.model.AnnouncementEntity;
 import com.simo.web.announcement.repository.AnnouncementRepository;
-import com.simo.web.comment.CommentServiceImpl;
-import com.simo.web.comment.model.CommentEntity;
+import com.simo.web.comment.service.CommentServiceImpl;
 import com.simo.web.region.model.RegionEntity;
 import com.simo.web.region.repository.RegionRepository;
 import com.simo.web.task.model.TaskEntity;
@@ -17,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component

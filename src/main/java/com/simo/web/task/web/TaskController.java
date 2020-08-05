@@ -1,17 +1,13 @@
 package com.simo.web.task.web;
 
-import com.simo.web.comment.CommentServiceImpl;
-import com.simo.web.comment.ResponseServiceImpl;
 import com.simo.web.comment.model.*;
-import com.simo.web.region.RegionService;
+import com.simo.web.region.service.RegionServiceImpl;
 import com.simo.web.region.model.RegionEntity;
-import com.simo.web.task.TaskService;
-import com.simo.web.task.model.RegisterTaskDTO;
-import com.simo.web.task.model.SearchTaskDTO;
-import com.simo.web.task.model.TaskEntity;
+import com.simo.web.response.model.ResponseAddDTO;
+import com.simo.web.task.service.TaskServiceImpl;
+import com.simo.web.task.model.TaskRegisterDTO;
+import com.simo.web.task.model.TaskSearchDTO;
 import com.simo.web.task.model.TaskServiceDTO;
-import com.simo.web.user.model.UserEntity;
-import com.simo.web.user.service.UserServiceImpl;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,44 +17,37 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
+
 
 @Controller
 @RequestMapping("/tasks")
 public class TaskController {
 
-    private final TaskService taskService;
-    private final RegionService regionService;
-    private final CommentServiceImpl commentService;
-    private final UserServiceImpl userService;
-    private final ResponseServiceImpl responseService;
+    private final TaskServiceImpl taskService;
+    private final RegionServiceImpl regionService;
 
-    public TaskController(TaskService taskService,
-                          RegionService regionService,
-                          CommentServiceImpl commentService,
-                          UserServiceImpl userService,
-                          ResponseServiceImpl responseService) {
+    public TaskController(TaskServiceImpl taskService,
+                          RegionServiceImpl regionService) {
 
         this.taskService = taskService;
         this.regionService = regionService;
-        this.commentService = commentService;
-        this.userService = userService;
-        this.responseService = responseService;
     }
 
     @GetMapping
     public String loadSearch(Model model) {
-        SearchTaskDTO searchTaskDTO;
+        TaskSearchDTO searchTaskDTO;
         CommentAddDTO commentAddDTO;
         ResponseAddDTO responseAddDTO;
 
 
         if (model.containsAttribute("searchForm")) {
-            searchTaskDTO = (SearchTaskDTO) model.getAttribute("searchForm");
+            searchTaskDTO = (TaskSearchDTO) model.getAttribute("searchForm");
+            model.addAttribute("foundTasks", this.taskService.searchTasks(searchTaskDTO.getNameLike(),
+                    searchTaskDTO.getClientFirstName(),
+                    searchTaskDTO.getClientSecondName()));
         }else{
-            searchTaskDTO = new SearchTaskDTO();
+            searchTaskDTO = new TaskSearchDTO();
             model.addAttribute("foundTasks", this.taskService.allTasks());
         }
 
@@ -104,7 +93,7 @@ public class TaskController {
 
 
     @PostMapping
-    public String getSearchedTasks(@Valid @ModelAttribute("searchForm") SearchTaskDTO searchTasksDTO,
+    public String getSearchedTasks(@Valid @ModelAttribute("searchForm") TaskSearchDTO searchTasksDTO,
                                    BindingResult bindingResult,
                                    RedirectAttributes redirectAttributes) {
 
@@ -122,95 +111,11 @@ public class TaskController {
                         searchTasksDTO.getClientSecondName());
 
 
+
+
         redirectAttributes.addFlashAttribute("foundTasks", taskServiceDTOS);
         redirectAttributes.addFlashAttribute("searchForm", searchTasksDTO);
 
-
-        return "redirect:/tasks";
-    }
-
-
-    @PreAuthorize("hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN')")
-    @PostMapping("/save-comment")
-    public String saveNewComment(@Valid @ModelAttribute("formAddComment") CommentAddDTO formAddComment,
-                                 BindingResult bindingResult,
-                                 RedirectAttributes redirectAttributes,
-                                 Principal principal) {
-
-
-        if (bindingResult.hasErrors()) {
-            CommentAddDTO errorCommentAttributes = new CommentAddDTO();
-            errorCommentAttributes.setDescription(formAddComment.getDescription());
-            errorCommentAttributes.setTaskId(formAddComment.getTaskId());
-
-            redirectAttributes.addFlashAttribute("errorCommentAttributes", errorCommentAttributes);
-
-            redirectAttributes.addFlashAttribute("formAddComment", formAddComment);
-            redirectAttributes
-                    .addFlashAttribute(BindingResult.MODEL_KEY_PREFIX + "formAddComment",
-                            bindingResult);
-
-            redirectAttributes.addFlashAttribute("commentError", true);
-//            redirectAttributes.addFlashAttribute("errorTaskId", formAddComment.getTaskId());
-
-            return "redirect:/tasks";
-        }
-        redirectAttributes.addFlashAttribute("commentError", false);
-
-        CommentServiceDTO commentServiceDTO = CommentMapper.INSTANCE.mapCommentAddDtoToCommentServiceDto(formAddComment);
-
-        TaskEntity task = this.taskService.findById(formAddComment.getTaskId());
-        UserEntity author = this.userService.findUserByUsername(principal.getName());
-
-        commentServiceDTO.setTask(task);
-        commentServiceDTO.setAuthor(author);
-        commentServiceDTO.setResponses(new ArrayList<>());
-        commentServiceDTO.setCreatedOn(Instant.now());
-
-        this.commentService.save(commentServiceDTO);
-
-        return "redirect:/tasks";
-    }
-
-
-    @PreAuthorize("hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN')")
-    @PostMapping("/save-reply")
-    public String saveNewReply(@Valid @ModelAttribute("formAddCommentReply") ResponseAddDTO formAddCommentReply,
-                                 BindingResult bindingResult,
-                                 RedirectAttributes redirectAttributes,
-                                 Principal principal) {
-
-
-        if (bindingResult.hasErrors()) {
-            ResponseAddDTO errorReplyAttributes = new ResponseAddDTO();
-            errorReplyAttributes.setDescription(formAddCommentReply.getDescription());
-            errorReplyAttributes.setCommentId(formAddCommentReply.getCommentId());
-
-            redirectAttributes.addFlashAttribute("errorReplyAttributes", errorReplyAttributes);
-
-            redirectAttributes.addFlashAttribute("formAddCommentReply", formAddCommentReply);
-            redirectAttributes
-                    .addFlashAttribute(BindingResult.MODEL_KEY_PREFIX + "formAddCommentReply",
-                            bindingResult);
-
-            redirectAttributes.addFlashAttribute("responseError", true);
-
-            return "redirect:/tasks";
-        }
-        redirectAttributes.addFlashAttribute("responseError", false);
-
-        ResponseServiceDTO responseServiceDTO =
-                ResponseMapper.INSTANCE.mapResponseAddDtoToResponseServiceDto(formAddCommentReply);
-
-        UserEntity author = this.userService.findUserByUsername(principal.getName());
-        CommentEntity comment = this.commentService.findById(formAddCommentReply.getCommentId());
-
-        responseServiceDTO.setAuthor(author);
-        responseServiceDTO.setComment(comment);
-        responseServiceDTO.setCreatedOn(Instant.now());
-
-
-        this.responseService.save(responseServiceDTO);
 
         return "redirect:/tasks";
     }
@@ -219,14 +124,14 @@ public class TaskController {
     @GetMapping("/new")
     public String newTask(Model model) {
 
-        RegisterTaskDTO formData;
+        TaskRegisterDTO formData;
         List<RegionEntity> allRegions = this.regionService.findAllRegions();
         model.addAttribute("regs", allRegions);
 
         if (model.containsAttribute("formData")) {
-            formData = (RegisterTaskDTO) model.getAttribute("formData");
+            formData = (TaskRegisterDTO) model.getAttribute("formData");
         } else {
-            formData = new RegisterTaskDTO();
+            formData = new TaskRegisterDTO();
 
         }
 
@@ -237,7 +142,7 @@ public class TaskController {
 
     @PreAuthorize("hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN')")
     @PostMapping("/save")
-    public String save(@Valid @ModelAttribute("formData") RegisterTaskDTO registerTaskDTO,
+    public String save(@Valid @ModelAttribute("formData") TaskRegisterDTO registerTaskDTO,
                        Principal principal,
                        BindingResult bindingResult,
                        RedirectAttributes redirectAttributes) {
@@ -256,9 +161,9 @@ public class TaskController {
         return "redirect:/tasks";
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_CLIENT')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete")
-    public String delete(@ModelAttribute("deleteId") Long deleteId) {
+    public String delete(@ModelAttribute("deleteTaskId") Long deleteId) {
         taskService.delete(deleteId);
 
         return "redirect:/tasks";

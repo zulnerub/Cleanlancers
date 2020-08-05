@@ -2,21 +2,11 @@ package com.simo.web.region.model;
 
 import com.simo.web.common.model.BaseEntity;
 import com.simo.web.task.model.TaskEntity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+
 @Entity
 @Table(name = "regions")
 public class RegionEntity extends BaseEntity {
@@ -30,5 +20,24 @@ public class RegionEntity extends BaseEntity {
             orphanRemoval = true)
     private List<TaskEntity> tasks;
 
+    public RegionEntity() {
+    }
 
+    public String getName() {
+        return name;
+    }
+
+    public RegionEntity setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public List<TaskEntity> getTasks() {
+        return tasks;
+    }
+
+    public RegionEntity setTasks(List<TaskEntity> tasks) {
+        this.tasks = tasks;
+        return this;
+    }
 }

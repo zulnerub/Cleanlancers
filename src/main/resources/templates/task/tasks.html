@@ -10,8 +10,14 @@
 <!-- Bootstrap JS -->
 <div th:replace="fragments/bootstrap-js :: bootstrap-js"></div>
 <!-- EO: Bootstrap JS -->
-<div sec:authorize="hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN')" th:replace="task/delete :: delete-task">
-    Modal dialog for delete
+<div sec:authorize="hasRole('ROLE_ADMIN')" th:replace="task/delete :: delete-task">
+    Modal dialog for deleting task
+</div>
+<div sec:authorize="hasRole('ROLE_ADMIN')" th:replace="comment/delete-comment :: delete-comment">
+    Modal dialog for deleting comment
+</div>
+<div sec:authorize="hasRole('ROLE_ADMIN')" th:replace="comment/delete-reply :: delete-reply">
+    Modal dialog for deleting reply
 </div>
 
 
@@ -28,8 +34,7 @@
 <!-- Behaviour -->
 
 <script sec:authorize="hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN')">
-    window.onload = function() {
-
+    window.onload = function () {
         let hasCommentError = $("#hasError").val();
         let hasResponseError = $("#hasResponseError").val();
         console.log(hasCommentError);
@@ -39,19 +44,57 @@
         if (hasCommentError === 'true') {
             $("#addCommentModal").modal('toggle');
         }
-        if (hasResponseError === 'true'){
+        if (hasResponseError === 'true') {
             $("#addCommentReplyModal").modal('toggle');
         }
 
-        $(document).on("click", ".open-delete-dialog", function () {
-            $("#deleteId").val($(this).data('id'));
+        //this works
+        $("#addCommentModal").on("hide.bs.modal", function () {
+            $("#commentDescription").val('')
+            let first = document.getElementById('addTaskComment').firstChild;
+            while (first !== null) {
+                let child = first;
+                first = child.nextElementSibling;
+                if (child.tagName === 'DIV') {
+                    let parent = child.parentNode;
+                    parent.removeChild(child);
+                }
+            }
         });
+
+        // to here !
+
+        $("#addCommentReplyModal").on("hide.bs.modal", function () {
+            $("#replyDescription").val('')
+            let firstReply = document.getElementById('addCommentReply').firstChild;
+            while (firstReply !== null) {
+                let childReply = firstReply;
+                firstReply = childReply.nextElementSibling;
+                if (childReply.tagName === 'DIV') {
+                    let parentReply = childReply.parentNode;
+                    parentReply.removeChild(childReply);
+                }
+            }
+        });
+        
+        $(document).on("click", ".open-delete-task", function () {
+            $("#deleteTaskId").val($(this).data('id'));
+        });
+
+        // $(document).on("click", ".open-delete-comment", function () {
+        //     $("#deleteCommentId").val($(this).data('comment-id'));
+        // });
+        //
+        // $(document).on("click", ".open-delete-reply", function () {
+        //     $("#deleteReplyId").val($(this).data('reply-id'));
+        // });
 
         $(document).on("click", ".add-task-comment", function () {
             $("#taskId").val($(this).data('id'));
         })
 
         $(document).on("click", ".add-task-comment-reply", function () {
+            $("#commentTaskId").val($(this).data('task-comment-reply'))
             $("#taskCommentId").val($(this).data('comment-id'));
         })
 
@@ -147,8 +190,7 @@
                         <button type="button"
                                 class="show-task-comments btn btn-primary"
                                 th:data-id="${task.id}">
-                            Show Comments
-                            <i class="fas fa-fa mx-1"></i>
+                            <i class="fas fa-fa mx-1">Show Comments</i>
                         </button>
                     </div>
                     <!--  / show/hide comments-->
@@ -161,16 +203,15 @@
                                 data-toggle="modal"
                                 data-target="#addCommentModal"
                                 th:data-id="${task.id}">
-                            Comment
-                            <i class="fas fa-fa mx-1"></i>
+                            <i class="fas fa-fa mx-1">Comment</i>
                         </button>
                     </div>
                     <!--                    / Add comment-->
                 </td>
                 <td>
-                    <div sec:authorize="hasRole('CLIENT') || hasRole('ADMIN')">
+                    <div sec:authorize="hasRole('ADMIN')">
                         <button type="button"
-                                class="open-delete-dialog btn btn-primary"
+                                class="open-delete-task btn btn-primary"
                                 data-toggle="modal"
                                 data-target="#deleteTaskModal"
                                 th:data-id="${task.id}">
@@ -185,7 +226,8 @@
             <tr th:object="${task}">
                 <td colspan="4">
                     <!--            comments div-->
-                    <div th:id="comment- + ${task.getId()}" style="display: none">
+                    <div th:id="comment- + ${task.getId()}"
+                         th:style="${(formAddComment.taskId != null and formAddComment.taskId == task.id) || formAddCommentReply.taskId == task.id ? 'display:block' : 'display:none'}">
                         <div class="card" th:each="taskComment : ${task.comments}">
                             <div class="card-body" th:object="${taskComment}">
                                 <div class="row">
@@ -207,18 +249,18 @@
 
                                         <!--                                        <p>-->
                                         <!--                                            <a class="float-right btn btn-outline-primary ml-2"> <i class="fa fa-reply"></i>Reply</a>-->
-                                        <!--                    Add comment-->
+                                        <!--                    Add reply-->
                                         <div>
                                             <button type="button"
                                                     class="add-task-comment-reply btn btn-primary"
                                                     data-toggle="modal"
                                                     data-target="#addCommentReplyModal"
-                                                    th:data-comment-id="${taskComment.id}">
-                                                Comment
-                                                <i class="fas fa-fa mx-1"></i>
+                                                    th:data-comment-id="${taskComment.id}"
+                                                    th:data-task-comment-reply="${task.id}">
+                                                <i class="fas fa-fa mx-1">Reply</i>
                                             </button>
                                         </div>
-                                        <!--                    / Add comment-->
+                                        <!--                    / Add reply-->
                                         <!--                                        </p>-->
 
                                         <div th:unless="${taskComment.responses.isEmpty()}"
@@ -226,32 +268,57 @@
                                             <button type="button"
                                                     class="show-comment-reply btn btn-primary"
                                                     th:data-comment-id="${taskComment.id}">
-                                                Show Replies
-                                                <i class="fas fa-fa mx-1"></i>
+                                                <i class="fas fa-fa mx-1">Show Replies</i>
+                                            </button>
+                                        </div>
+                                        <div sec:authorize="hasRole('ADMIN')">
+                                            <button type="button"
+                                                    class="open-delete-coment btn btn-primary"
+                                                    data-toggle="modal"
+                                                    data-target="#deleteCommentModal"
+                                                    th:data-comment-id="${taskComment.getId()}">
+                                                <i class="fas fa-trash mx-1"></i>
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-
+                                <!--                        List replies-->
                                 <div class="card card-inner" th:id="comment-reply- + ${taskComment.id}"
+                                     th:style="${(formAddCommentReply.commentId != null and formAddCommentReply.commentId == taskComment.id) ? 'display:block' : 'display:none'}"
                                      style="display: none">
                                     <div class="card-body" th:each="response : ${taskComment.responses}">
                                         <div class="row" th:object="${response}">
-                                            <div class="col-md-10">
+                                            <div class="col-md-2">
                                                 <img src="https://image.ibb.co/jw55Ex/def_face.jpg"
                                                      class="img img-rounded img-fluid"/>
-                                                <p class="text-secondary text-center" th:text="${response.createdOn}">
-                                                    Data
+                                                <p class="text-secondary text-center" th:text="${response.createdOn}">Data
                                                     created</p>
                                             </div>
                                             <div class="col-md-10">
                                                 <p><a href="https://maniruzzaman-akash.blogspot.com/p/contact.html"
                                                       th:text="${response.author.firstName + ' ' + response.author.lastName}"><strong>Creator
                                                 </strong></a></p>
-                                                <p th:text="${response.description}">Description</p>
+                                                <p th:text="${response.responseDescription}">Description</p>
                                                 <p>
-                                                    <a class="float-right btn btn-outline-primary ml-2"> <i
-                                                            class="fa fa-reply"></i>Reply</a>
+                                                <div>
+                                                    <button type="button"
+                                                            class="add-task-comment-reply float-right btn btn-primary"
+                                                            data-toggle="modal"
+                                                            data-target="#addCommentReplyModal"
+                                                            th:data-comment-id="${taskComment.id}"
+                                                            th:data-task-comment-reply="${task.id}">
+                                                        <i class="fa fa-reply">Add Reply</i>
+                                                    </button>
+                                                </div>
+                                                <div sec:authorize="hasRole('ADMIN')">
+                                                    <button type="button"
+                                                            class="open-delete-reply btn btn-primary"
+                                                            data-toggle="modal"
+                                                            data-target="#deleteReplyModal"
+                                                            th:data-reply-id="${response.id}">
+                                                        <i class="fas fa-trash mx-1"></i>
+                                                    </button>
+                                                </div>
                                                 </p>
                                             </div>
                                         </div>
@@ -268,7 +335,6 @@
     </div>
 
 </div>
-
 
 
 <!-- /.container -->
