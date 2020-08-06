@@ -76,7 +76,7 @@
                 }
             }
         });
-        
+
         $(document).on("click", ".open-delete-task", function () {
             $("#deleteTaskId").val($(this).data('id'));
         });
@@ -88,6 +88,7 @@
         // $(document).on("click", ".open-delete-reply", function () {
         //     $("#deleteReplyId").val($(this).data('reply-id'));
         // });
+
 
         $(document).on("click", ".add-task-comment", function () {
             $("#taskId").val($(this).data('id'));
@@ -291,7 +292,8 @@
                                             <div class="col-md-2">
                                                 <img src="https://image.ibb.co/jw55Ex/def_face.jpg"
                                                      class="img img-rounded img-fluid"/>
-                                                <p class="text-secondary text-center" th:text="${response.createdOn}">Data
+                                                <p class="text-secondary text-center" th:text="${response.createdOn}">
+                                                    Data
                                                     created</p>
                                             </div>
                                             <div class="col-md-10">

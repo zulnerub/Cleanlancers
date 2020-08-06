@@ -1,0 +1,31 @@
+.new-button {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+}
+
+.center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.centered-text {
+  text-align: center
+}
+
+.margins-top-bottom {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.margin-left {
+  margin-left: 10px;
+}
+
+.home-paragraph {
+  margin-left: 50px;
+  margin-right: 50px;
+}

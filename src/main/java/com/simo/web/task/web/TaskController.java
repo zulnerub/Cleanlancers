@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -32,6 +33,12 @@ public class TaskController {
 
         this.taskService = taskService;
         this.regionService = regionService;
+    }
+
+    @RequestMapping(value = "/tasks-by-name", method = RequestMethod.GET)
+    public @ResponseBody List<String> filteredTaskNames (@RequestParam String taskName){
+        List<String> result = this.taskService.filterByName(taskName);
+        return result == null ? new ArrayList<>() : result;
     }
 
     @GetMapping

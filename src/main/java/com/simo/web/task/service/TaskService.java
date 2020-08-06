@@ -19,4 +19,6 @@ public interface TaskService {
     void createTask(TaskRegisterDTO registerTaskDTO, String username);
 
     void delete(Long taskId);
+
+    List<String> filterByName(String taskName);
 }

@@ -23,5 +23,7 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
     Optional<List<TaskEntity>> getTasksBySearchParameters(@Param("name") String name,
                                                           @Param("clientFirstName") String clientFirstName,
                                                           @Param("clientSecondName") String clientSecondName);
-
+    @Query(value = "SELECT t.name FROM TaskEntity t " +
+            "WHERE t.name like CONCAT('%', :taskName, '%')")
+    Optional<List<String>> filterByName(@Param("taskName") String taskName);
 }

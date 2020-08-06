@@ -90,4 +90,10 @@ public class TaskServiceImpl implements TaskService {
 
         taskRepository.deleteById(taskId);
     }
+
+    @Override
+    public List<String> filterByName(String taskName) {
+
+        return this.taskRepository.filterByName(taskName).orElse(null);
+    }
 }
