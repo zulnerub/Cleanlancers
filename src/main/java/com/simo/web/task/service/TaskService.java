@@ -20,5 +20,9 @@ public interface TaskService {
 
     void delete(Long taskId);
 
-    List<String> filterByName(String taskName);
+    List<String> filterByTaskName(String taskName);
+
+    List<String> filterByClientFirstName(String firstName);
+
+    List<String> filterByClientLastName(String lastName);
 }

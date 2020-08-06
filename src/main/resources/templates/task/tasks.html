@@ -90,6 +90,94 @@
         // });
 
 
+        $("#nameLike").keyup(() => {
+            let inputParam = $("#nameLike").val();
+            let url = 'http://localhost:8080/tasks/tasks-by-name/' + inputParam;
+            let options = document.getElementById("foundTaskNames");
+            options.textContent = '';
+
+            if (inputParam.length > 0) {
+                fetch(url)
+                    .then((response) => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            throw new Error('Something went wrong');
+                        }
+                    })
+                    .then((responseJson) => {
+                        let resultList = Object.values(responseJson);
+                        if (resultList.length > 0) {
+                            resultList.forEach((x) => {
+                                $("#foundTaskNames").append('<option value="' + x + '"></option>');
+                            })
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            }
+        });
+
+        $("#clientFirstName").keyup(() => {
+            let inputParam = $("#clientFirstName").val();
+            let url = 'http://localhost:8080/tasks/tasks-by-client-first-name/' + inputParam;
+            let options = document.getElementById("foundTaskClientFirstNames");
+            options.textContent = '';
+
+            if (inputParam.length > 0) {
+                fetch(url)
+                    .then((response) => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            throw new Error('Something went wrong');
+                        }
+                    })
+                    .then((responseJson) => {
+                        let resultList = Object.values(responseJson);
+                        if (resultList.length > 0) {
+                            resultList.forEach((x) => {
+                                $("#foundTaskClientFirstNames").append('<option value="' + x + '"></option>');
+                            })
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            }
+        });
+
+        $("#clientLastName").keyup(() => {
+            let inputParam = $("#clientLastName").val();
+            let url = 'http://localhost:8080/tasks/tasks-by-client-last-name/' + inputParam;
+            let options = document.getElementById("foundTaskClientLastNames");
+            options.textContent = '';
+
+            if (inputParam.length > 0) {
+                fetch(url)
+                    .then((response) => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            throw new Error('Something went wrong');
+                        }
+                    })
+                    .then((responseJson) => {
+                        let resultList = Object.values(responseJson);
+                        if (resultList.length > 0) {
+                            resultList.forEach((x) => {
+                                $("#foundTaskClientLastNames").append('<option value="' + x + '"></option>');
+                            })
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            }
+        });
+
+
         $(document).on("click", ".add-task-comment", function () {
             $("#taskId").val($(this).data('id'));
         })
@@ -116,6 +204,7 @@
                 commentReplyDiv.style.display = "none";
             }
         })
+
     }
 
 </script>
@@ -143,19 +232,34 @@
             </tr>
             <tr>
                 <td>
-                    <input name="nameLike" id="nameLike" th:value="*{nameLike}" type="text"
+                    <input name="nameLike"
+                           list="foundTaskNames"
+                           id="nameLike"
+                           th:value="*{nameLike}"
+                           type="text"
                            class="form-control validate"
                            placeholder="Tasks name">
+                    <datalist id="foundTaskNames"></datalist>
                 </td>
                 <td>
-                    <input name="clientFirstName" id="clientFirstName" th:value="*{clientFirstName}" type="text"
+                    <input name="clientFirstName"
+                           list="foundTaskClientFirstNames"
+                           id="clientFirstName"
+                           th:value="*{clientFirstName}"
+                           type="text"
                            class="form-control validate"
                            placeholder="Client first name">
+                    <datalist id="foundTaskClientFirstNames"></datalist>
                 </td>
                 <td>
-                    <input name="clientSecondName" id="clientSecondName" th:value="*{clientSecondName}" type="text"
+                    <input name="clientLastName"
+                           list="foundTaskClientLastNames"
+                           id="clientLastName"
+                           th:value="*{clientSecondName}"
+                           type="text"
                            class="form-control validate"
                            placeholder="Client last name">
+                    <datalist id="foundTaskClientLastNames"></datalist>
                 </td>
                 <td>
                     <div class="input-group">

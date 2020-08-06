@@ -35,9 +35,33 @@ public class TaskController {
         this.regionService = regionService;
     }
 
-    @RequestMapping(value = "/tasks-by-name", method = RequestMethod.GET)
-    public @ResponseBody List<String> filteredTaskNames (@RequestParam String taskName){
-        List<String> result = this.taskService.filterByName(taskName);
+    @GetMapping(value = {"/tasks-by-name/{taskName}", "/tasks-by-name/"})
+    public @ResponseBody List<String> filteredTasksByName (
+            @PathVariable(name = "taskName", required = false) String taskName){
+        List<String> result = new ArrayList<>();
+        if(taskName != null){
+             result = this.taskService.filterByTaskName(taskName);
+        }
+        return result == null ? new ArrayList<>() : result;
+    }
+
+    @GetMapping(value = {"/tasks-by-client-first-name/{firstName}", "/tasks-by-client-first-name/"})
+    public @ResponseBody List<String> filteredTasksByClientFirstName (
+            @PathVariable(name = "firstName", required = false) String firstName){
+        List<String> result = new ArrayList<>();
+        if(firstName != null){
+            result = this.taskService.filterByClientFirstName(firstName);
+        }
+        return result == null ? new ArrayList<>() : result;
+    }
+
+    @GetMapping(value = {"/tasks-by-client-last-name/{lastName}", "/tasks-by-client-last-name/"})
+    public @ResponseBody List<String> filteredTasksByClientSecondName (
+            @PathVariable(name = "lastName", required = false) String lastName){
+        List<String> result = new ArrayList<>();
+        if(lastName != null){
+            result = this.taskService.filterByClientLastName(lastName);
+        }
         return result == null ? new ArrayList<>() : result;
     }
 

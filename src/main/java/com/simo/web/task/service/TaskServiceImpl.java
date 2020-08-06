@@ -92,8 +92,18 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<String> filterByName(String taskName) {
+    public List<String> filterByTaskName(String taskName) {
 
-        return this.taskRepository.filterByName(taskName).orElse(null);
+        return this.taskRepository.filterByTaskName(taskName).orElse(null);
+    }
+
+    @Override
+    public List<String> filterByClientFirstName(String firstName) {
+        return this.taskRepository.filterByClientFirstName(firstName).orElse(null);
+    }
+
+    @Override
+    public List<String> filterByClientLastName(String lastName) {
+        return this.taskRepository.filterByClientLastName(lastName).orElse(null);
     }
 }
