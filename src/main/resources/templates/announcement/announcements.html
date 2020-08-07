@@ -21,35 +21,41 @@
 </div>
 
 <div class="container">
-    <div th:object="${announcement}"
-         th:each="announcement: ${announcements}"
-         class="my-3 border-secondary card">
-        <div class="card-header">
-            <div class="d-flex justify-content-between">
-                <div class="col-10">
-                    <span th:text="*{title}">Title</span>
-                    <small>
-                        <em>
-                            (last updated on <span th:text="*{#temporals.format(updatedOn, 'dd-MM-yyyy HH:mm')}">1979-03-07</span>)
-                        </em>
-                    </small>
+    <div th:if="${announcements.isEmpty()}">
+        <p>You have no new Announcements.</p>
+    </div>
+    <div th:unless="${announcements.isEmpty()}">
+        <div th:object="${announcement}"
+             th:each="announcement: ${announcements}"
+             class="my-3 border-secondary card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between">
+                    <div class="col-10">
+                        <span th:text="*{title}">Title</span>
+                        <small>
+                            <em>
+                                (last updated on <span th:text="*{#temporals.format(updatedOn, 'dd-MM-yyyy HH:mm')}">1979-03-07</span>)
+                            </em>
+                        </small>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="card-body">
-            <h5 class="card-title"></h5>
-            <p th:text="*{description}" class="card-text"></p>
-        </div>
-        <div sec:authorize="hasRole('ROLE_ADMIN')">
-            <button type="button"
-                    class="open-announcement-delete-dialog btn btn-primary"
-                    data-toggle="modal"
-                    data-target="#deleteAnnouncementModal"
-                    th:data-id="*{id}">
-                <i class="fas fa-trash mx-1"></i>
-            </button>
+            <div class="card-body">
+                <h5 class="card-title"></h5>
+                <p th:text="*{description}" class="card-text"></p>
+            </div>
+            <div sec:authorize="hasRole('ROLE_ADMIN')">
+                <button type="button"
+                        class="open-announcement-delete-dialog btn btn-primary"
+                        data-toggle="modal"
+                        data-target="#deleteAnnouncementModal"
+                        th:data-id="*{id}">
+                    <i class="fas fa-trash mx-1"></i>
+                </button>
+            </div>
         </div>
     </div>
+
 </div>
 
 <div sec:authorize="hasRole('ROLE_ADMIN')">

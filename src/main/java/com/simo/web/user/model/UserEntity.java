@@ -1,7 +1,10 @@
 package com.simo.web.user.model;
 
+import com.simo.web.announcement.model.AnnouncementEntity;
 import com.simo.web.comment.model.CommentEntity;
 import com.simo.web.common.model.BaseEntity;
+import com.simo.web.region.model.RegionEntity;
+import com.simo.web.response.model.ResponseEntity;
 import com.simo.web.task.model.TaskEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +15,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -40,12 +44,11 @@ public class UserEntity {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @OneToMany(
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
+    @ManyToMany(
+            cascade = CascadeType.MERGE,
             fetch = FetchType.EAGER
     )
-    private List<RoleEntity> roles;
+    private Set<RoleEntity> roles;
 
     @OneToMany(
             mappedBy = "author",
@@ -59,7 +62,7 @@ public class UserEntity {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<CommentEntity> responses;
+    private List<ResponseEntity> responses;
 
     @OneToMany(
             mappedBy = "cleaner",
@@ -74,5 +77,18 @@ public class UserEntity {
             orphanRemoval = true
     )
     private List<TaskEntity> clientTasks;
+
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<AnnouncementEntity> announcements;
+
+    @ManyToOne(
+            fetch = FetchType.LAZY
+    )
+    @JoinColumn(name = "region_id")
+    private RegionEntity region;
 
 }

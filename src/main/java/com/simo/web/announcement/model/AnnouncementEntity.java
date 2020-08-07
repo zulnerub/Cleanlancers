@@ -1,6 +1,8 @@
 package com.simo.web.announcement.model;
 
 import com.simo.web.common.model.BaseEntity;
+import com.simo.web.user.model.RoleEntity;
+import com.simo.web.user.model.UserEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,4 +32,10 @@ public class AnnouncementEntity extends BaseEntity {
     @Column
     private String description;
 
+    @NotNull
+    @ManyToOne(
+            fetch = FetchType.LAZY
+    )
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 }

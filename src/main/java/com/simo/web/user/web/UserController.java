@@ -1,5 +1,7 @@
 package com.simo.web.user.web;
 
+import com.simo.web.region.model.RegionEntity;
+import com.simo.web.region.service.RegionService;
 import com.simo.web.user.model.UserRegisterDTO;
 import com.simo.web.user.service.UserServiceImpl;
 import org.springframework.stereotype.Controller;
@@ -13,28 +15,35 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping("/users")
 public class UserController {
 
     private final UserServiceImpl userService;
+    private final RegionService regionService;
 
-    public UserController(UserServiceImpl userService) {
+    public UserController(UserServiceImpl userService, RegionService regionService) {
         this.userService = userService;
+        this.regionService = regionService;
     }
 
     @GetMapping("/register")
     public String register(Model model) {
         model.addAttribute("userRegisterDTO", new UserRegisterDTO());
+
+        List<RegionEntity> allRegions = this.regionService.findAllRegions();
+        model.addAttribute("regions", allRegions);
+
         return "users/register";
     }
 
     @PostMapping("/register")
     public String registerConfirm(
             @Valid @ModelAttribute("userRegisterDTO") UserRegisterDTO userRegisterDTO,
+//            @ModelAttribute("regions") List<RegionEntity> allRegions,
             BindingResult bindingResult,
-            ModelAndView modelAndView,
             RedirectAttributes redirectAttributes) {
 
 
@@ -50,18 +59,6 @@ public class UserController {
                     "An account with this email already exists.");
             return "users/register";
         }
-
-//        boolean passMatch = userRegisterDTO.getPassword().equals(userRegisterDTO.getConfirmPassword());
-//
-//        if (!passMatch || userRegisterDTO.getRole() == null) {
-//            redirectAttributes.addFlashAttribute("userRegisterDTO", userRegisterDTO);
-//            redirectAttributes.addFlashAttribute("matching", passMatch);
-//            redirectAttributes.addFlashAttribute("incorrectRole", userRegisterDTO.getRole() == null);
-//            modelAndView.setViewName("redirect:/users/register");
-//        }else {
-//            UserServiceModel userServiceModel = this.userService.registerUser(userRegisterDTO);
-//            modelAndView.setViewName("redirect:/users/login");
-//        }
 
         userService.createAndLoginUser(userRegisterDTO);
 

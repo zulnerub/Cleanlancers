@@ -2,6 +2,7 @@ package com.simo.web.region.web;
 
 import com.simo.web.region.service.RegionServiceImpl;
 import com.simo.web.region.model.RegionEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/regions")
-//@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class RegionController {
 
     private final RegionServiceImpl regionService;

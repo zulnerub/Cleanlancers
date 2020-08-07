@@ -1,6 +1,5 @@
 package com.simo.web.task.service;
 
-import com.simo.web.comment.service.CommentServiceImpl;
 import com.simo.web.region.service.RegionServiceImpl;
 import com.simo.web.region.model.RegionEntity;
 import com.simo.web.task.model.TaskRegisterDTO;
@@ -24,13 +23,12 @@ public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final UserServiceImpl userService;
     private final RegionServiceImpl regionService;
-    private final CommentServiceImpl commentService;
 
-    public TaskServiceImpl(TaskRepository taskRepository, UserServiceImpl userService, RegionServiceImpl regionService, CommentServiceImpl commentService) {
+
+    public TaskServiceImpl(TaskRepository taskRepository, UserServiceImpl userService, RegionServiceImpl regionService ) {
         this.taskRepository = taskRepository;
         this.userService = userService;
         this.regionService = regionService;
-        this.commentService = commentService;
     }
 
     @Override
@@ -44,10 +42,10 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskServiceDTO> searchTasks(String taskName, String clientName, String cleanerName) {
+    public List<TaskServiceDTO> searchTasks(String taskName, String clientFirstName, String ClientLastName) {
 
         List<TaskEntity> taskEntities = this.taskRepository
-                .getTasksBySearchParameters(taskName, clientName, cleanerName).orElse(null);
+                .getTasksBySearchParameters(taskName, clientFirstName, ClientLastName).orElse(null);
 
         List<TaskServiceDTO> taskServiceDTOS = new ArrayList<>();
         if (taskEntities != null) {
@@ -80,20 +78,12 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void delete(Long taskId) {
-//        Optional<TaskEntity> taskToDelete = this.taskRepository.findById(taskId);
-//        if (taskToDelete.isPresent()) {
-//            if (!taskToDelete.get().getComments().isEmpty()) {
-//                taskToDelete.get().getComments()
-//                        .forEach(c -> this.commentService.deleteById(c.getId()));
-//            }
-//        }
 
         taskRepository.deleteById(taskId);
     }
 
     @Override
     public List<String> filterByTaskName(String taskName) {
-
         return this.taskRepository.filterByTaskName(taskName).orElse(null);
     }
 
@@ -105,5 +95,10 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<String> filterByClientLastName(String lastName) {
         return this.taskRepository.filterByClientLastName(lastName).orElse(null);
+    }
+
+    @Override
+    public void updatedTaskWithCleaner(TaskEntity task) {
+        this.taskRepository.save(task);
     }
 }

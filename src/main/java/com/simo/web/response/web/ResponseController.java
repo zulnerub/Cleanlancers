@@ -79,7 +79,7 @@ public class ResponseController {
         TaskSearchDTO taskSearchDTO = new TaskSearchDTO();
         taskSearchDTO.setNameLike(comment.getTask().getName());
         taskSearchDTO.setClientFirstName("");
-        taskSearchDTO.setClientSecondName("");
+        taskSearchDTO.setClientLastName("");
         redirectAttributes.addFlashAttribute("searchForm", taskSearchDTO);
 
         formAddCommentReply.setResponseDescription("");

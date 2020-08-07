@@ -3,12 +3,14 @@ package com.simo.web.announcement.service;
 import com.simo.web.announcement.model.AnnouncementRegisterDTO;
 import com.simo.web.announcement.model.AnnouncementEntity;
 import com.simo.web.announcement.model.AnnouncementMapper;
+import com.simo.web.announcement.model.AnnouncementServiceDto;
 import com.simo.web.announcement.repository.AnnouncementRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,5 +55,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     public void delete(Long announcementId){
         announcementRepository.deleteById(announcementId);
+    }
+
+    @Override
+    public List<AnnouncementEntity> findAllByUserEmail(String email) {
+        return this.announcementRepository.findAllByUser_EmailOrderByCreatedOnDesc(email).orElse(new ArrayList<>());
     }
 }

@@ -26,7 +26,7 @@
     </button>
     <!-- EO: Project name -->
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <div class="collapse navbar-collapse " id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item" th:classappend="${activeTab == 'home'}? 'active'">
                 <a class="nav-link" th:href="@{/home}">Home</a>
@@ -39,10 +39,10 @@
                 <a class="nav-link" th:href="@{/tasks}">Tasks</a>
             </li>
 
-<!--            <li sec:authorize="hasRole('ADMIN')" class="nav-item" th:classappend="${activeTab == 'events'}? 'active'">-->
-<!--                <a class="nav-link" th:href="@{/events}">Events</a>-->
-<!--            </li>-->
-            <li sec:authorize="hasRole('ADMIN')" class="nav-item" th:classappend="${activeTab == 'regions'}? 'active'">
+            <li sec:authorize="hasRole('ROLE_ADMIN')" class="nav-item" th:classappend="${activeTab == 'administration'}? 'active'">
+                <a class="nav-link" th:href="@{/administration}">Administration</a>
+            </li>
+            <li sec:authorize="hasRole('ROLE_ADMIN')" class="nav-item" th:classappend="${activeTab == 'regions'}? 'active'">
                 <a class="nav-link" th:href="@{/regions}">Regions</a>
             </li>
 

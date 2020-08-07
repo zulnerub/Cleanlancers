@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
-@PreAuthorize("hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN')")
+@PreAuthorize("hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN') || hasRole('ROLE_CLEANER')")
 public class HomeController {
 
     @GetMapping("/")

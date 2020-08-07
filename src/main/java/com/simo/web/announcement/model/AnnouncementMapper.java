@@ -13,4 +13,6 @@ public interface AnnouncementMapper {
 
     AnnouncementRegisterDTO mapAnnouncementEntityToDto(AnnouncementEntity entity);
 
+    AnnouncementServiceDto mapAnnouncementEntityToAnnouncementServiceDto(AnnouncementEntity announcementEntity);
+
 }

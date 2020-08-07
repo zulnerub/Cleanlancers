@@ -2,8 +2,7 @@ package com.simo.web.user.model.mapper;
 
 
 import com.simo.web.user.model.UserEntity;
-import com.simo.web.user.model.UserRegisterDTO;
-import com.simo.web.user.model.UserServiceModel;
+import com.simo.web.user.model.UserServiceDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -12,10 +11,7 @@ public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
+    UserEntity mapUserServiceModelToUserEntity(UserServiceDTO userServiceDTO);
 
-    UserServiceModel mapUserRegisterDtoToUserServiceModel(UserRegisterDTO userRegisterDTO);
-
-    UserEntity mapUserServiceModelToUserEntity(UserServiceModel userServiceModel);
-
-    UserServiceModel mapUserEntityToUserServiceModel(UserEntity saveAndFlush);
+    UserServiceDTO mapUserEntityToUserServiceModel(UserEntity saveAndFlush);
 }

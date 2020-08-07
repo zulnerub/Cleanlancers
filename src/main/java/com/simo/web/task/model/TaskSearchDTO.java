@@ -9,5 +9,5 @@ public class TaskSearchDTO {
 
     private String nameLike;
     private String clientFirstName;
-    private String clientSecondName;
+    private String clientLastName;
 }

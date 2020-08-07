@@ -25,4 +25,6 @@ public interface TaskService {
     List<String> filterByClientFirstName(String firstName);
 
     List<String> filterByClientLastName(String lastName);
+
+    void updatedTaskWithCleaner(TaskEntity task);
 }

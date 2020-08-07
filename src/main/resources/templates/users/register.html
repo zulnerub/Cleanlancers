@@ -129,6 +129,23 @@
                 </th:block>
             </div>
 
+            <div class="input-group mt-3">
+                <label for="region" class="col-xl-4 col-lg-6 col-md-6 col-sm-6 col-form-label">
+                    What region do you currently occupy ?
+                </label>
+                <select th:field="*{region}" name="region" id="region">
+                    <option th:value="null" th:text="'Please select a region'"></option>
+                    <th:block th:each="region : ${regions}">
+                        <option  th:value="${region.name}" th:text="${region.name}"></option>
+                    </th:block>
+                </select>
+                <th:block th:each="e : ${#fields.errors('region')}">
+                    <div class="mx-auto">
+                        <small th:text="${e}" class="text-danger"></small>
+                    </div>
+                </th:block>
+            </div>
+
 
             <div class="input-group mt-3">
                 <button type="submit" class="btn btn-primary d-inline-block mx-auto">Register</button>

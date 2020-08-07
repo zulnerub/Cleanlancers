@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
@@ -76,7 +77,7 @@ public class TaskController {
             searchTaskDTO = (TaskSearchDTO) model.getAttribute("searchForm");
             model.addAttribute("foundTasks", this.taskService.searchTasks(searchTaskDTO.getNameLike(),
                     searchTaskDTO.getClientFirstName(),
-                    searchTaskDTO.getClientSecondName()));
+                    searchTaskDTO.getClientLastName()));
         }else{
             searchTaskDTO = new TaskSearchDTO();
             model.addAttribute("foundTasks", this.taskService.allTasks());
@@ -139,7 +140,7 @@ public class TaskController {
         List<TaskServiceDTO> taskServiceDTOS =
                 this.taskService.searchTasks(searchTasksDTO.getNameLike(),
                         searchTasksDTO.getClientFirstName(),
-                        searchTasksDTO.getClientSecondName());
+                        searchTasksDTO.getClientLastName());
 
 
 
@@ -173,10 +174,11 @@ public class TaskController {
 
     @PreAuthorize("hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN')")
     @PostMapping("/save")
-    public String save(@Valid @ModelAttribute("formData") TaskRegisterDTO registerTaskDTO,
+    public ModelAndView save(@Valid @ModelAttribute("formData") TaskRegisterDTO registerTaskDTO,
                        Principal principal,
                        BindingResult bindingResult,
-                       RedirectAttributes redirectAttributes) {
+                       RedirectAttributes redirectAttributes,
+                       ModelAndView modelAndView) {
 
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("formData", registerTaskDTO);
@@ -184,12 +186,18 @@ public class TaskController {
                     .addFlashAttribute(BindingResult.MODEL_KEY_PREFIX + "formData",
                             bindingResult);
 
-            return "redirect:/tasks/new";
+            modelAndView.setViewName("redirect:/tasks/new");
+            return modelAndView;
         }
+        ModelAndView modelAndView1 = new ModelAndView();
+        modelAndView.addObject("creatorName", principal.getName());
+        modelAndView.addObject("taskRegion", registerTaskDTO.getRegion());
+        modelAndView.addObject("taskName", registerTaskDTO.getName());
+        modelAndView.setViewName("redirect:/tasks");
 
         taskService.createTask(registerTaskDTO, principal.getName());
 
-        return "redirect:/tasks";
+        return modelAndView;
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

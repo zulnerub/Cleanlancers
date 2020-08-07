@@ -19,10 +19,10 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
     @Query(value = "SELECT t FROM TaskEntity t " +
             "WHERE t.name like CONCAT('%', :name, '%') " +
             "AND t.client.firstName like CONCAT('%', :clientFirstName, '%') " +
-            "AND t.client.lastName like CONCAT('%', :clientSecondName, '%') ")
+            "AND t.client.lastName like CONCAT('%', :clientLastName, '%') ")
     Optional<List<TaskEntity>> getTasksBySearchParameters(@Param("name") String name,
                                                           @Param("clientFirstName") String clientFirstName,
-                                                          @Param("clientSecondName") String clientSecondName);
+                                                          @Param("clientLastName") String clientLastName);
 
     @Query(value = "SELECT t.name FROM TaskEntity t " +
             "WHERE t.name like CONCAT('%', :taskName, '%')")
@@ -33,8 +33,8 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
     Optional<List<String>> filterByClientFirstName(@Param("clientFirstName") String clientFirstName);
 
     @Query(value = "SELECT DISTINCT t.client.lastName FROM TaskEntity t " +
-            "WHERE t.client.lastName like CONCAT('%', :lastName, '%')")
-    Optional<List<String>> filterByClientLastName(@Param("lastName") String lastName);
+            "WHERE t.client.lastName like CONCAT('%', :clientLastName, '%')")
+    Optional<List<String>> filterByClientLastName(@Param("clientLastName") String clientLastName);
 
 
 }

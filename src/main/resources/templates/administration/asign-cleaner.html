@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<script>
+</script>
+<div th:fragment="assign-cleaner">
+    <!-- Modal -->
+    <div class="modal fade" id="assignCleanerModal" tabindex="-1"
+         role="dialog"
+         aria-labelledby="assignCleaner"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="assignCleaner">Add comment</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="form-group col-md-4 col-lg-4">
+                    <form th:action="@{/administration/assign-cleaner}" th:object="${assignCleanerForm}"
+                          th:method="post"
+                          id="assignCleanerToTask">
+                        <input id="taskRegion" name="taskId"
+                               th:field="*{taskRegion}"
+                               type="hidden"/>
+                        <input id="taskId" name="taskId"
+                               th:field="*{taskId}"
+                               type="hidden"/>
+                        <label for="assignedUsername">Input cleaner email:</label>
+                        <input name="assignedUsername"
+                               list="foundCleanerEmails"
+                               id="assignedUsername"
+                               th:value="*{assignedUsername}"
+                               type="text"
+                               class="form-control validate"
+                               th:errorclass="is-invalid"
+                               placeholder="Cleaner email">
+                        <datalist id="foundCleanerEmails"></datalist>
+                        <div class="invalid-feedback">
+                            <p>User with that email not found</p>
+                        </div>
+                        <div th:each="e : ${#fields.errors('assignedUsername')}" class="mx-auto">
+                            <small th:text="${e}" class="text-danger"></small>
+                        </div>
+
+
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

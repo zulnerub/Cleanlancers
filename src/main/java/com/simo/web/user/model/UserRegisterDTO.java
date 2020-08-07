@@ -2,11 +2,13 @@ package com.simo.web.user.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.simo.web.common.validator.FieldMatch;
+import com.simo.web.region.model.RegionServiceDTO;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -31,5 +33,8 @@ public class UserRegisterDTO {
 
     @NotBlank
     private String role;
+
+    @NotNull
+    private String region;
 
 }

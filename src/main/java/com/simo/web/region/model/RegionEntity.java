@@ -2,11 +2,17 @@ package com.simo.web.region.model;
 
 import com.simo.web.common.model.BaseEntity;
 import com.simo.web.task.model.TaskEntity;
+import com.simo.web.user.model.UserEntity;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
 
-
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "regions")
 public class RegionEntity extends BaseEntity {
@@ -20,24 +26,12 @@ public class RegionEntity extends BaseEntity {
             orphanRemoval = true)
     private List<TaskEntity> tasks;
 
-    public RegionEntity() {
-    }
+    @OneToMany(
+            mappedBy = "region",
+            cascade = CascadeType.ALL
+    )
+    private List<UserEntity> users;
 
-    public String getName() {
-        return name;
-    }
 
-    public RegionEntity setName(String name) {
-        this.name = name;
-        return this;
-    }
 
-    public List<TaskEntity> getTasks() {
-        return tasks;
-    }
-
-    public RegionEntity setTasks(List<TaskEntity> tasks) {
-        this.tasks = tasks;
-        return this;
-    }
 }
