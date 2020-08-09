@@ -77,7 +77,7 @@ public class CommentController {
         TaskSearchDTO taskSearchDTO = new TaskSearchDTO();
         taskSearchDTO.setNameLike(task.getName());
         taskSearchDTO.setClientFirstName("");
-        taskSearchDTO.setClientFirstName("");
+        taskSearchDTO.setClientLastName("");
         redirectAttributes.addFlashAttribute("searchForm", taskSearchDTO);
 
         formAddComment.setDescription("");

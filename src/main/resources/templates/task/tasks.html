@@ -48,7 +48,6 @@
             $("#addCommentReplyModal").modal('toggle');
         }
 
-        //this works
         $("#addCommentModal").on("hide.bs.modal", function () {
             $("#commentDescription").val('')
             let first = document.getElementById('addTaskComment').firstChild;
@@ -61,8 +60,6 @@
                 }
             }
         });
-
-        // to here !
 
         $("#addCommentReplyModal").on("hide.bs.modal", function () {
             $("#replyDescription").val('')
@@ -81,13 +78,13 @@
             $("#deleteTaskId").val($(this).data('id'));
         });
 
-        // $(document).on("click", ".open-delete-comment", function () {
-        //     $("#deleteCommentId").val($(this).data('comment-id'));
-        // });
-        //
-        // $(document).on("click", ".open-delete-reply", function () {
-        //     $("#deleteReplyId").val($(this).data('reply-id'));
-        // });
+        $(document).on("click", ".open-delete-comment", function () {
+            $("#deleteCommentId").val($(this).data('comment-id'));
+        });
+
+        $(document).on("click", ".open-delete-reply", function () {
+            $("#deleteReplyId").val($(this).data('reply-id'));
+        });
 
 
         $("#nameLike").keyup(() => {
@@ -215,7 +212,7 @@
 <div th:replace="fragments/navbar :: navbar('tasks')">Navbar here</div>
 <!-- EO: Navbar -->
 <!-- Page Content -->
-<div class="container">
+<div class="container col-10" >
     <!-- Heading -->
     <h1 class="my-4" th:if="${foundTasks == null}">You have no tasks
         <small>There are no tasks with these parameters</small>
@@ -223,14 +220,14 @@
 
     <hr>
     <form th:action="@{/tasks}" th:method="post" th:object="${searchForm}">
-        <table>
-            <tr>
+        <table class="col-10">
+            <tr class="col-10 row align-items-start justify-content-center">
                 <th>Search by task name</th>
                 <th>Search by client first name</th>
                 <th>Search by client last name</th>
                 <th></th>
             </tr>
-            <tr>
+            <tr class="col-10 row align-items-start justify-content-center">
                 <td>
                     <input name="nameLike"
                            list="foundTaskNames"
@@ -279,11 +276,11 @@
     <!-- /create button -->
 
     <div th:unless="${foundTasks == null}">
-        <h1 class="col-lg-10" th:unless="${foundTasks.isEmpty()}">Your tasks are listed below</h1>
+<!--        <h1 class="col-lg-10 justify-content-center" th:unless="${foundTasks.isEmpty()}">Your tasks are listed below</h1>-->
         <!-- Task Row -->
-        <table>
+        <table class="col-10">
             <div th:object="${task}" th:each="task : ${foundTasks}">
-                <tr>
+                <tr class="col-10 row align-items-start justify-content-center">
                     <td>
                         <h3 th:text="${task.name}" class="my-3">Project Description</h3>
                         <p th:text="${task.client.getEmail()}"></p>
@@ -326,7 +323,7 @@
                         </div>
                     </td>
                 </tr>
-                <tr>
+                <tr class="col-10 row align-items-start justify-content-center">
                     <td colspan="4">
                         <!--            comments div-->
                         <div th:id="comment- + ${task.getId()}"
@@ -367,8 +364,7 @@
                                             <!--                    / Add reply-->
                                             <!--                                        </p>-->
 
-                                            <div th:unless="${taskComment.responses.isEmpty()}"
-                                                 sec:authorize="hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN')">
+                                            <div th:unless="${taskComment.responses.isEmpty()}">
                                                 <button type="button"
                                                         class="show-comment-reply btn btn-primary"
                                                         th:data-comment-id="${taskComment.id}">
@@ -377,7 +373,7 @@
                                             </div>
                                             <div sec:authorize="hasRole('ADMIN')">
                                                 <button type="button"
-                                                        class="open-delete-coment btn btn-primary"
+                                                        class="open-delete-comment btn btn-primary"
                                                         data-toggle="modal"
                                                         data-target="#deleteCommentModal"
                                                         th:data-comment-id="${taskComment.getId()}">

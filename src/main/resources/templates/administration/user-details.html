@@ -111,7 +111,7 @@
                         What region do you currently occupy ?
                     </label>
                     <select th:field="*{region}" name="region" id="region">
-                        <option th:value="*{region}"></option>
+                        <option th:value="*{region}" th:text="*{region}"></option>
                         <th:block th:each="reg : ${regions}">
                             <option th:value="${reg.name}" th:text="${reg.name}"></option>
                         </th:block>

@@ -12,7 +12,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteReply">Delete task</h5>
+                    <h5 class="modal-title" id="deleteReply">Delete reply</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -26,7 +26,7 @@
                             id="formDelete"
                             th:action="@{/responses/delete}"
                             th:method="delete">
-                        <input id="deleteReplyId" name="deleteReplyId" type="hidden" value=""/>
+                        <input id="deleteReplyId" name="deleteReplyId" type="hidden"/>
                         <button id="btnDelete" type="submit" class="btn btn-primary">Delete</button>
                     </form>
                 </div>

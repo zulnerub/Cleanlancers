@@ -90,7 +90,7 @@ public class ResponseController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete")
-    public String delete(@ModelAttribute("deleteId") Long deleteId) {
+    public String delete(@ModelAttribute("deleteReplyId") Long deleteId) {
         responseService.delete(deleteId);
 
         return "redirect:/tasks";

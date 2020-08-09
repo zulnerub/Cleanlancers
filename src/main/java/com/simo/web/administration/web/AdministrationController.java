@@ -6,7 +6,7 @@ import com.simo.web.task.model.TaskEntity;
 import com.simo.web.task.service.TaskServiceImpl;
 import com.simo.web.user.model.*;
 import com.simo.web.user.model.mapper.UserMapper;
-import com.simo.web.user.model.mapper.UserUpdateDTO;
+import com.simo.web.user.model.UserUpdateDTO;
 import com.simo.web.user.service.RoleServiceImpl;
 import com.simo.web.user.service.UserServiceImpl;
 import org.springframework.security.access.prepost.PreAuthorize;
