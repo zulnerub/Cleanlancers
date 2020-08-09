@@ -14,4 +14,6 @@ public interface UserMapper {
     UserEntity mapUserServiceModelToUserEntity(UserServiceDTO userServiceDTO);
 
     UserServiceDTO mapUserEntityToUserServiceModel(UserEntity saveAndFlush);
+
+
 }

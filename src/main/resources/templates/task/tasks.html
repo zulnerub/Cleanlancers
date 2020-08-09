@@ -33,7 +33,7 @@
 <input type="hidden" id="hasResponseError" th:value="${responseError}"/>
 <!-- Behaviour -->
 
-<script sec:authorize="hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN')">
+<script sec:authorize="hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN') || hasRole('ROLE_CLEANER')">
     window.onload = function () {
         let hasCommentError = $("#hasError").val();
         let hasResponseError = $("#hasResponseError").val();

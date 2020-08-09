@@ -29,6 +29,13 @@ public interface UserService {
 
     List<String> filterByUserRegionName(String regionName);
 
+    List<String> filterCleanersByEmailLikeAndTaskRegion(String emailLike, String taskRegion);
 
-    void updatedCleanerWithNewTasks(UserEntity cleaner);
+    List<UserServiceDTO> findAllUsersBySearchParams(String username, String firstName, String lastName);
+
+    List<UserServiceDTO> findAllUsers();
+
+    UserServiceDTO findById(Long id);
+
+    void updateUser(UserServiceDTO user);
 }

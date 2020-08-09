@@ -151,11 +151,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updatedCleanerWithNewTasks(UserEntity cleaner) {
-        this.userRepository.save(cleaner);
+    public void updateUser(UserServiceDTO user) {
+        this.userRepository.save(UserMapper.INSTANCE.mapUserServiceModelToUserEntity(user));
     }
 
-
+    @Override
     public List<String> filterCleanersByEmailLikeAndTaskRegion(String emailLike, String taskRegion) {
 
         List<String> collect = this.userRepository.filterUsersByEmail(emailLike).orElse(null)
@@ -167,6 +167,30 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
 
     return collect;
+    }
+
+    @Override
+    public List<UserServiceDTO> findAllUsersBySearchParams(String username, String firstName, String lastName) {
+        return this.userRepository.getUsersBySearchParams(username, firstName, lastName).orElse(new ArrayList<>())
+                .stream()
+                .map(UserMapper.INSTANCE::mapUserEntityToUserServiceModel)
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public List<UserServiceDTO> findAllUsers() {
+        return this.userRepository.findAll()
+                .stream()
+                .map(UserMapper.INSTANCE::mapUserEntityToUserServiceModel)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public UserServiceDTO findById(Long id) {
+        return UserMapper.INSTANCE
+                .mapUserEntityToUserServiceModel(
+                        this.userRepository.findById(id).orElse(null));
     }
 
 

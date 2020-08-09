@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head :: head">
+    <title>Cleanlancers</title>
+</head>
+<body>
+
+<!-- Bootstrap JS -->
+<div th:replace="fragments/bootstrap-js :: bootstrap-js"></div>
+<!-- EO: Bootstrap JS -->
+<!-- Navbar -->
+<div th:replace="fragments/navbar :: navbar('user-details')">Navbar here</div>
+<!-- EO: Navbar -->
+<!-- Page Content -->
+<div class="container col-10">
+    <!-- Heading -->
+    <h1 class="my-4" th:if="${userEntity == null}">
+        <small>No user found</small>
+    </h1>
+
+    <hr>
+
+    <table class="table" th:object="${userEntity}">
+        <form class="form-control" th:method="post"
+              th:action="@{/administration/update-user-details}">
+            <tr class="row align-items-start justify-content-center">
+                <input th:field="*{id}"
+                       name="id"
+                       type="text"
+                       class="form-control"
+                       id="id" style="display: none">
+                <div class="input-group mt-3">
+                    <label for="email" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Email</label>
+                    <input th:field="*{email}"
+                           name="email"
+                           type="text"
+                           class="form-control validate"
+                           th:errorclass="is-invalid"
+                           id="email"
+                           placeholder="Enter last name">
+                    <br>
+                    <th:block th:each="e : ${#fields.errors('email')}">
+                        <div class="mx-auto">
+                            <small th:text="${e}" class="text-danger"></small>
+                        </div>
+                    </th:block>
+                </div>
+            </tr>
+            <tr class="row align-items-start justify-content-center">
+                <div class="input-group mt-3">
+                    <label for="firstName" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">First name</label>
+                    <input th:field="*{firstName}"
+                           name="firstName"
+                           type="text"
+                           class="form-control validate"
+                           th:errorclass="is-invalid"
+                           id="firstName"
+                           placeholder="Enter first name">
+                    <br>
+                    <th:block th:each="e : ${#fields.errors('firstName')}">
+                        <div class="mx-auto">
+                            <small th:text="${e}" class="text-danger"></small>
+                        </div>
+                    </th:block>
+                </div>
+            </tr>
+            <tr class="row align-items-start justify-content-center">
+                <div class="input-group mt-3">
+                    <label for="lastName" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Last name</label>
+                    <input th:field="*{lastName}"
+                           name="firstName"
+                           type="text"
+                           class="form-control validate"
+                           th:errorclass="is-invalid"
+                           id="lastName"
+                           placeholder="Enter last name">
+                    <br>
+                    <th:block th:each="e : ${#fields.errors('lastName')}">
+                        <div class="mx-auto">
+                            <small th:text="${e}" class="text-danger"></small>
+                        </div>
+                    </th:block>
+                </div>
+            </tr>
+            <tr class="row align-items-start justify-content-center">
+                <div class="input-group mt-3">
+                    <label for="role" class="col-xl-4 col-lg-6 col-md-6 col-sm-6 col-form-label">What do you
+                        need ?</label>
+                    <select th:field="*{roles}"
+                            name="role"
+                            id="role"
+                            class="form-control validate"
+                            th:class="is-invalid">
+                        <option th:value="*{roles}"></option>
+                        <option th:value="'ROLE_ADMIN'" th:text="'Administrator'"></option>
+                        <option th:value="'ROLE_CLIENT'" th:text="'I seek cleaners.'"></option>
+                        <option th:value="'ROLE_CLEANER'" th:text="'I seek work.'"></option>
+                    </select>
+                    <th:block th:each="e : ${#fields.errors('roles')}">
+                        <div class="mx-auto">
+                            <small th:text="${e}" class="text-danger"></small>
+                        </div>
+                    </th:block>
+                </div>
+            </tr>
+            <tr class="row align-items-start justify-content-center">
+                <div class="input-group mt-3">
+                    <label for="region" class="col-xl-4 col-lg-6 col-md-6 col-sm-6 col-form-label">
+                        What region do you currently occupy ?
+                    </label>
+                    <select th:field="*{region}" name="region" id="region">
+                        <option th:value="*{region}"></option>
+                        <th:block th:each="reg : ${regions}">
+                            <option th:value="${reg.name}" th:text="${reg.name}"></option>
+                        </th:block>
+                    </select>
+                    <th:block th:each="e : ${#fields.errors('region')}">
+                        <div class="mx-auto">
+                            <small th:text="${e}" class="text-danger"></small>
+                        </div>
+                    </th:block>
+                </div>
+            </tr>
+            <tr class="row align-items-start justify-content-center">
+                <td>
+                    <button type="submit">
+                        <i class="fas fa-fa mx-1">Update User</i>
+                    </button>
+                </td>
+            </tr>
+        </form>
+    </table>
+
+
+</div>
+
+
+<!-- /.container -->
+</body>
+</html>

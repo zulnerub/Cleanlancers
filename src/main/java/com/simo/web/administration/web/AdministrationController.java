@@ -1,12 +1,13 @@
 package com.simo.web.administration.web;
 
+import com.simo.web.region.model.RegionEntity;
+import com.simo.web.region.service.RegionServiceImpl;
 import com.simo.web.task.model.TaskEntity;
-import com.simo.web.task.model.mapper.TaskMapper;
 import com.simo.web.task.service.TaskServiceImpl;
-import com.simo.web.user.model.AssignCleanerForm;
-import com.simo.web.user.model.UserEntity;
-import com.simo.web.user.model.UserSearchDTO;
-import com.simo.web.user.model.UserServiceDTO;
+import com.simo.web.user.model.*;
+import com.simo.web.user.model.mapper.UserMapper;
+import com.simo.web.user.model.mapper.UserUpdateDTO;
+import com.simo.web.user.service.RoleServiceImpl;
 import com.simo.web.user.service.UserServiceImpl;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -28,10 +29,14 @@ public class AdministrationController {
 
     private final UserServiceImpl userService;
     private final TaskServiceImpl taskService;
+    private final RegionServiceImpl regionService;
+    private final RoleServiceImpl roleService;
 
-    public AdministrationController(UserServiceImpl userService, TaskServiceImpl taskService) {
+    public AdministrationController(UserServiceImpl userService, TaskServiceImpl taskService, RegionServiceImpl regionService, RoleServiceImpl roleService) {
         this.userService = userService;
         this.taskService = taskService;
+        this.regionService = regionService;
+        this.roleService = roleService;
     }
 
     @PostMapping("/unassign-cleaner")
@@ -76,7 +81,7 @@ public class AdministrationController {
         cleaner.getCleanerTasks().add(task);
         task.setCleaner(cleaner);
 
-        this.userService.updatedCleanerWithNewTasks(cleaner);
+        this.userService.updateUser(UserMapper.INSTANCE.mapUserEntityToUserServiceModel(cleaner));
         this.taskService.updatedTask(task);
 
         modelAndView.addObject("adminUsername", principal.getName());
@@ -210,5 +215,115 @@ public class AdministrationController {
 
 
         return "redirect:/administration";
+    }
+
+    @GetMapping("/user-management")
+    public String userManagement(Model model) {
+
+        UserSearchDTO userSearchDTO;
+        if (model.containsAttribute("searchForm")) {
+            userSearchDTO = (UserSearchDTO) model.getAttribute("searchForm");
+            model.addAttribute("foundUsers", this.userService.findAllUsersBySearchParams(
+                    userSearchDTO.getEmail() == null ? "" : userSearchDTO.getEmail(),
+                    userSearchDTO.getFirstName(),
+                    userSearchDTO.getLastName()));
+        } else {
+            userSearchDTO = new UserSearchDTO();
+            model.addAttribute("foundUsers", this.userService.findAllUsers());
+        }
+
+        model.addAttribute("searchForm", userSearchDTO);
+
+        return "administration/user-management";
+
+    }
+
+    @PostMapping("/user-management")
+    public String getSearchedUsers(@Valid @ModelAttribute("searchForm") UserSearchDTO userSearchDTO,
+                                   BindingResult bindingResult,
+                                   RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("searchForm", userSearchDTO);
+            redirectAttributes.addFlashAttribute(BindingResult.MODEL_KEY_PREFIX + "searchForm", bindingResult);
+
+            return "redirect:/administration/user-management";
+        }
+
+
+        List<UserServiceDTO> userServiceDTOS =
+                this.userService.findAllUsersBySearchParams(
+                        userSearchDTO.getEmail() == null ? "" : userSearchDTO.getEmail(),
+                        userSearchDTO.getFirstName(),
+                        userSearchDTO.getLastName());
+
+
+        redirectAttributes.addFlashAttribute("foundUsers", userServiceDTOS);
+        redirectAttributes.addFlashAttribute("searchForm", userSearchDTO);
+
+
+        return "redirect:/administration/user-management";
+    }
+
+    @GetMapping("/user-details/{id}")
+    public String getUserDetails(@PathVariable(name = "id") String userIdString,
+                                 Model model, RedirectAttributes redirectAttributes
+                                ){
+        Long userId = Long.parseLong(userIdString);
+        if (model.containsAttribute("userEntity")){
+            UserUpdateDTO user = (UserUpdateDTO) model.getAttribute("userEntity");
+            if (user.getId() != null && user.getId().equals(userId)){
+                model.addAttribute("userEntity", user);
+
+                return "administration/user-details";
+            }
+        }
+        UserUpdateDTO userUpdateDTO = new UserUpdateDTO();
+
+        UserServiceDTO user = this.userService.findById(userId);
+
+        userUpdateDTO.setId(user.getId());
+        userUpdateDTO.setEmail(user.getEmail());
+        userUpdateDTO.setFirstName(user.getFirstName());
+        userUpdateDTO.setLastName(user.getLastName());
+        userUpdateDTO.setRegion(user.getRegion().getName());
+        userUpdateDTO.setRoles(user.getRoles().get(0).getName());
+
+        List<RegionEntity> allRegions = this.regionService.findAllRegions();
+        model.addAttribute("userEntity", userUpdateDTO);
+
+        model.addAttribute("regions", allRegions);
+
+        redirectAttributes.addFlashAttribute("userEntity", userUpdateDTO);
+        redirectAttributes.addFlashAttribute("regions", allRegions);
+
+        return "administration/user-details";
+    }
+
+    @PostMapping("/update-user-details")
+    public String updateUserDetails(@ModelAttribute("userEntity") UserUpdateDTO model,
+                                    BindingResult bindingResult,
+                                    RedirectAttributes redirectAttributes
+                                 ){
+
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("userEntity", model);
+            redirectAttributes
+                    .addFlashAttribute(BindingResult.MODEL_KEY_PREFIX + "userEntity",
+                            bindingResult);
+
+            return "administration/user-details";
+        }
+
+        UserServiceDTO user =  this.userService.findById(model.getId());
+        user.setEmail(model.getEmail());
+        user.setFirstName(model.getFirstName());
+        user.setLastName(model.getLastName());
+        user.setRegion(this.regionService.findRegionByName(model.getRegion()));
+        user.setRoles(List.of(this.roleService.findRoleByName(model.getRoles())));
+
+        this.userService.updateUser(user);
+
+        return "redirect:/administration/user-details/" + model.getId();
     }
 }

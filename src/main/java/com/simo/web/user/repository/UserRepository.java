@@ -25,6 +25,15 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
                                                          @Param("lastName") String lastName,
                                                          @Param("workArea") String workArea);
 
+    @Query(value = "SELECT u FROM UserEntity u " +
+            "WHERE u.email like CONCAT('%', :email, '%') " +
+            "AND u.firstName like CONCAT('%', :firstName, '%') " +
+            "AND u.lastName like CONCAT('%', :lastName, '%') " +
+            "ORDER BY u.email ASC ")
+    Optional<List<UserEntity>> getUsersBySearchParams(@Param("email") String email,
+                                                         @Param("firstName") String firstName,
+                                                         @Param("lastName") String lastName);
+
     @Query(value = "SELECT u FROM UserEntity  u " +
             "WHERE u.email like CONCAT('%', :userEmail, '%') ")
     Optional<List<UserEntity>> filterUsersByEmail(@Param("userEmail") String userEmail);

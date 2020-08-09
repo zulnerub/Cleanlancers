@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head :: head">
+    <title>Cleanlancers</title>
+</head>
+<body>
+
+<!-- Bootstrap JS -->
+<div th:replace="fragments/bootstrap-js :: bootstrap-js"></div>
+<!-- EO: Bootstrap JS -->
+
+
+<script sec:authorize="hasRole('ROLE_ADMIN')">
+    $("#usernameLike").keyup(() => {
+        let inputParam = $("#usernameLike").val();
+        let url = 'http://localhost:8080/administration/user-by-email/' + inputParam;
+        let options = document.getElementById("foundUsernames");
+        options.textContent = '';
+
+        if (inputParam.length > 0) {
+            fetch(url)
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Something went wrong');
+                    }
+                })
+                .then((responseJson) => {
+                    let resultList = Object.values(responseJson);
+                    if (resultList.length > 0) {
+                        resultList.forEach((x) => {
+                            $("#foundUsernames").append('<option value="' + x + '"></option>');
+                        })
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    });
+
+    $("#firstName").keyup(() => {
+        let inputParam = $("#firstName").val();
+        let url = 'http://localhost:8080/administration/user-by-first-name/' + inputParam;
+        let options = document.getElementById("foundTaskClientFirstNames");
+        options.textContent = '';
+
+        if (inputParam.length > 0) {
+            fetch(url)
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Something went wrong');
+                    }
+                })
+                .then((responseJson) => {
+                    let resultList = Object.values(responseJson);
+                    if (resultList.length > 0) {
+                        resultList.forEach((x) => {
+                            $("#foundUserFirstNames").append('<option value="' + x + '"></option>');
+                        })
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    });
+
+    $("#lastName").keyup(() => {
+        let inputParam = $("#lastName").val();
+        let url = 'http://localhost:8080/administration/user-by-last-name/' + inputParam;
+        let options = document.getElementById("foundUserLastNames");
+        options.textContent = '';
+
+        if (inputParam.length > 0) {
+            fetch(url)
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Something went wrong');
+                    }
+                })
+                .then((responseJson) => {
+                    let resultList = Object.values(responseJson);
+                    if (resultList.length > 0) {
+                        resultList.forEach((x) => {
+                            $("#foundUserLastNames").append('<option value="' + x + '"></option>');
+                        })
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    });
+</script>
+
+<!-- Navbar -->
+<div th:replace="fragments/navbar :: navbar('user-managment')">Navbar here</div>
+<!-- EO: Navbar -->
+<!-- Page Content -->
+<div class="container col-10">
+    <!-- Heading -->
+    <h1  th:if="${foundUsers.size() == 0}">
+        <small class="row align-items-center justify-content-center">No users found</small>
+    </h1>
+
+    <hr>
+    <form class="row align-items-start justify-content-center"
+            th:action="@{/administration/user-management}"
+            th:method="post" th:object="${searchForm}">
+        <table>
+            <tr class="row align-items-start justify-content-center">
+                <th>Search by username</th>
+                <th>Search by user first name</th>
+                <th>Search by user last name</th>
+                <th></th>
+            </tr>
+            <tr class="row align-items-start justify-content-center">
+                <td>
+                    <input name="usernameLike"
+                           list="foundUsernames"
+                           id="usernameLike"
+                           th:value="${searchForm.getEmail()}"
+                           type="text"
+                           class="form-control validate"
+                           placeholder="Username">
+                    <datalist id="foundUsernames"></datalist>
+                </td>
+                <td>
+                    <input name="firstName"
+                           list="foundUserFirstNames"
+                           id="firstName"
+                           th:value="*{firstName}"
+                           type="text"
+                           class="form-control validate"
+                           placeholder="First name">
+                    <datalist id="foundUserFirstNames"></datalist>
+                </td>
+                <td>
+                    <input name="lastName"
+                           list="foundUserLastNames"
+                           id="lastName"
+                           th:value="*{lastName}"
+                           type="text"
+                           class="form-control validate"
+                           placeholder="User last name">
+                    <datalist id="foundUserLastNames"></datalist>
+                </td>
+                <td>
+                    <div class="input-group">
+                        <button type="submit" class="btn btn-primary d-inline-block mx-auto">Search</button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <hr>
+
+    <div th:unless="${foundUsers == null}">
+        <h1 class="row align-items-start justify-content-center" th:unless="${foundUsers.isEmpty()}">Users are listed below</h1>
+        <table class="table">
+            <div th:object="${user}" th:each="user : ${foundUsers}">
+                <tr class="row align-items-start justify-content-center">
+                    <td>
+                        <p th:text="*{email}"></p>
+                    </td>
+                    <td>
+                        <p th:text="*{firstName}"></p>
+                    </td>
+                    <td>
+                        <p th:text="*{lastName}"></p>
+                    </td>
+                    <td>
+                        <p th:text="*{region.name}"></p>
+                    </td>
+                    <td>
+                        <form th:action="@{'/administration/user-details/' + ${user.id}}"
+                              th:method="get" >
+                            <button type="submit" class="btn btn-primary" role="button">
+                            <i class="fas fa-fa mx-1">User Details</i>
+                        </button>
+                        </form>
+                    </td>
+                </tr>
+            </div>
+        </table>
+    </div>
+
+</div>
+
+
+<!-- /.container -->
+</body>
+</html>

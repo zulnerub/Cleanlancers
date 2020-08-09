@@ -214,7 +214,7 @@
 
     <hr>
     <form th:action="@{/administration}" th:method="post" th:object="${searchForm}">
-        <table class="col-lg-10">
+        <table class="table">
             <tr>
                 <th>Search by Cleaner email</th>
                 <th>Search by Cleaner first name</th>
@@ -274,7 +274,7 @@
     </form>
     <hr>
 
-    <table class="table">
+    <table class="table ">
         <tr>
             <td class="w-50" th:unless="${foundCleaners == null && foundCleaners.isEmpty()}">
                 <h1>Cleaners:</h1>

@@ -86,7 +86,8 @@ public class UserEntity {
     private List<AnnouncementEntity> announcements;
 
     @ManyToOne(
-            fetch = FetchType.LAZY
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.MERGE
     )
     @JoinColumn(name = "region_id")
     private RegionEntity region;
