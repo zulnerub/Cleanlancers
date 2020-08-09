@@ -10,10 +10,27 @@ import javax.validation.constraints.NotNull;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TaskRegisterDTO {
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "Please enter name of task.")
     private String name;
 
-    @NotNull
+    @NotBlank(message = "Please choose a region")
     private String region;
+
+    public String getName() {
+        return name;
+    }
+
+    public TaskRegisterDTO setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public TaskRegisterDTO setRegion(String region) {
+        this.region = region;
+        return this;
+    }
 }

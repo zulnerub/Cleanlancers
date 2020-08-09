@@ -13,6 +13,8 @@ public interface TaskService {
 
     List<TaskEntity> allTasks();
 
+    List<TaskEntity> findAllOrderByCleanerAssigned();
+
     List<TaskServiceDTO> searchTasks(String taskName, String clientName, String cleanerName);
 
 
@@ -26,5 +28,5 @@ public interface TaskService {
 
     List<String> filterByClientLastName(String lastName);
 
-    void updatedTaskWithCleaner(TaskEntity task);
+    void updatedTask(TaskEntity task);
 }

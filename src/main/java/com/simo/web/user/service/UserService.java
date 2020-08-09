@@ -19,7 +19,7 @@ public interface UserService {
 
     void createAndLoginUser(UserRegisterDTO userRegisterDTO);
 
-    List<UserServiceDTO> searchCleaners(String email, String firstName, String lastName, int numberOfTasks, String regionName);
+    List<UserServiceDTO> searchCleaners(String email, String firstName, String lastName, String regionName);
 
     List<String> filterByUserEmail(String userEmail);
 

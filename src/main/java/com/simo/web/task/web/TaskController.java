@@ -29,42 +29,45 @@ public class TaskController {
     private final TaskServiceImpl taskService;
     private final RegionServiceImpl regionService;
 
-    public TaskController(TaskServiceImpl taskService,
-                          RegionServiceImpl regionService) {
-
+    public TaskController(TaskServiceImpl taskService, RegionServiceImpl regionService) {
         this.taskService = taskService;
         this.regionService = regionService;
     }
 
+    //    Task Search
     @GetMapping(value = {"/tasks-by-name/{taskName}", "/tasks-by-name/"})
-    public @ResponseBody List<String> filteredTasksByName (
-            @PathVariable(name = "taskName", required = false) String taskName){
+    public @ResponseBody
+    List<String> filteredTasksByName(
+            @PathVariable(name = "taskName", required = false) String taskName) {
         List<String> result = new ArrayList<>();
-        if(taskName != null){
-             result = this.taskService.filterByTaskName(taskName);
+        if (taskName != null) {
+            result = this.taskService.filterByTaskName(taskName);
         }
         return result == null ? new ArrayList<>() : result;
     }
 
     @GetMapping(value = {"/tasks-by-client-first-name/{firstName}", "/tasks-by-client-first-name/"})
-    public @ResponseBody List<String> filteredTasksByClientFirstName (
-            @PathVariable(name = "firstName", required = false) String firstName){
+    public @ResponseBody
+    List<String> filteredTasksByClientFirstName(
+            @PathVariable(name = "firstName", required = false) String firstName) {
         List<String> result = new ArrayList<>();
-        if(firstName != null){
+        if (firstName != null) {
             result = this.taskService.filterByClientFirstName(firstName);
         }
         return result == null ? new ArrayList<>() : result;
     }
 
     @GetMapping(value = {"/tasks-by-client-last-name/{lastName}", "/tasks-by-client-last-name/"})
-    public @ResponseBody List<String> filteredTasksByClientSecondName (
-            @PathVariable(name = "lastName", required = false) String lastName){
+    public @ResponseBody
+    List<String> filteredTasksByClientSecondName(
+            @PathVariable(name = "lastName", required = false) String lastName) {
         List<String> result = new ArrayList<>();
-        if(lastName != null){
+        if (lastName != null) {
             result = this.taskService.filterByClientLastName(lastName);
         }
         return result == null ? new ArrayList<>() : result;
     }
+// EO Task search
 
     @GetMapping
     public String loadSearch(Model model) {
@@ -78,7 +81,7 @@ public class TaskController {
             model.addAttribute("foundTasks", this.taskService.searchTasks(searchTaskDTO.getNameLike(),
                     searchTaskDTO.getClientFirstName(),
                     searchTaskDTO.getClientLastName()));
-        }else{
+        } else {
             searchTaskDTO = new TaskSearchDTO();
             model.addAttribute("foundTasks", this.taskService.allTasks());
         }
@@ -86,33 +89,33 @@ public class TaskController {
         model.addAttribute("searchForm", searchTaskDTO);
 
 
-        if (model.containsAttribute("formAddComment")){
+        if (model.containsAttribute("formAddComment")) {
             commentAddDTO = (CommentAddDTO) model.getAttribute("formAddComment");
-        }else{
+        } else {
             commentAddDTO = new CommentAddDTO();
             model.addAttribute("commentError", false);
         }
 
-        if (!model.containsAttribute("errorCommentAttributes")){
+        if (!model.containsAttribute("errorCommentAttributes")) {
             CommentAddDTO errorCommentAttributes = new CommentAddDTO();
             model.addAttribute("errorCommentAttributes", errorCommentAttributes);
-        }else {
+        } else {
             model.addAttribute("commentError", true);
         }
 
         model.addAttribute("formAddComment", commentAddDTO);
 
-        if (model.containsAttribute("formAddCommentReply")){
+        if (model.containsAttribute("formAddCommentReply")) {
             responseAddDTO = (ResponseAddDTO) model.getAttribute("formAddCommentReply");
-        }else{
+        } else {
             responseAddDTO = new ResponseAddDTO();
             model.addAttribute("responseError", false);
         }
 
-        if (!model.containsAttribute("errorReplyAttributes")){
+        if (!model.containsAttribute("errorReplyAttributes")) {
             ResponseAddDTO errorReplyAttributes = new ResponseAddDTO();
             model.addAttribute("errorReplyAttributes", errorReplyAttributes);
-        }else {
+        } else {
             model.addAttribute("responseError", true);
         }
 
@@ -122,7 +125,6 @@ public class TaskController {
         return "task/tasks";
 
     }
-
 
     @PostMapping
     public String getSearchedTasks(@Valid @ModelAttribute("searchForm") TaskSearchDTO searchTasksDTO,
@@ -143,8 +145,6 @@ public class TaskController {
                         searchTasksDTO.getClientLastName());
 
 
-
-
         redirectAttributes.addFlashAttribute("foundTasks", taskServiceDTOS);
         redirectAttributes.addFlashAttribute("searchForm", searchTasksDTO);
 
@@ -158,16 +158,16 @@ public class TaskController {
 
         TaskRegisterDTO formData;
         List<RegionEntity> allRegions = this.regionService.findAllRegions();
-        model.addAttribute("regs", allRegions);
+        model.addAttribute("regions", allRegions);
 
         if (model.containsAttribute("formData")) {
             formData = (TaskRegisterDTO) model.getAttribute("formData");
         } else {
-            formData = new TaskRegisterDTO();
-
+        formData = new TaskRegisterDTO();
         }
 
         model.addAttribute("formData", formData);
+
 
         return "task/new";
     }
@@ -175,21 +175,21 @@ public class TaskController {
     @PreAuthorize("hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN')")
     @PostMapping("/save")
     public ModelAndView save(@Valid @ModelAttribute("formData") TaskRegisterDTO registerTaskDTO,
-                       Principal principal,
-                       BindingResult bindingResult,
-                       RedirectAttributes redirectAttributes,
-                       ModelAndView modelAndView) {
+                             BindingResult bindingResult,
+                             Principal principal,
+                             RedirectAttributes redirectAttributes,
+                             ModelAndView modelAndView
+                             ) {
 
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("formData", registerTaskDTO);
             redirectAttributes
                     .addFlashAttribute(BindingResult.MODEL_KEY_PREFIX + "formData",
                             bindingResult);
-
             modelAndView.setViewName("redirect:/tasks/new");
             return modelAndView;
         }
-        ModelAndView modelAndView1 = new ModelAndView();
+        modelAndView.clear();
         modelAndView.addObject("creatorName", principal.getName());
         modelAndView.addObject("taskRegion", registerTaskDTO.getRegion());
         modelAndView.addObject("taskName", registerTaskDTO.getName());

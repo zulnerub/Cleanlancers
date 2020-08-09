@@ -15,10 +15,17 @@
 <div sec:authorize="hasRole('ROLE_ADMIN')" th:replace="administration/asign-cleaner :: assign-cleaner">
     Modal for assigning a cleaner to task
 </div>
+<div sec:authorize="hasRole('ROLE_ADMIN')" th:replace="administration/unassign-cleaner :: unassign-cleaner">
+    Modal for unassigning a cleaner from task
+</div>
 
 <script>
 
     window.onload = function () {
+
+        $(document).on("click", ".remove-cleaner-from-task", function () {
+            $("#unassignTaskId").val($(this).data('id'));
+        });
 
         $("#assignedUsername").keydown(() => {
             document.getElementById("foundCleanerEmails").textContent = '';
@@ -53,7 +60,6 @@
                     });
             }
         });
-
 
 
         let notFound = $("#userNotFound").val();
@@ -259,14 +265,6 @@
                     <datalist id="foundWorkAreas"></datalist>
                 </td>
                 <td>
-                    <input name="numberOfTasks"
-                           id="numberOfTasks"
-                           th:value="*{numberOfTasks}"
-                           type="text"
-                           class="form-control validate"
-                           placeholder="Number of tasks">
-                </td>
-                <td>
                     <div class="input-group">
                         <button type="submit" class="btn btn-primary d-inline-block mx-auto">Search</button>
                     </div>
@@ -281,8 +279,8 @@
             <td class="w-50" th:unless="${foundCleaners == null && foundCleaners.isEmpty()}">
                 <h1>Cleaners:</h1>
                 <table class="table table-striped table-responsive-md" id="cleaners"
-                       th:each="cleaner : ${foundCleaners}">
-                    <tr th:object="${cleaner}">
+                       >
+                    <tr th:object="${cleaner}" th:each="cleaner : ${foundCleaners}">
                         <td>
                             <h3 th:text="${cleaner.firstName} + ' ' + ${cleaner.lastName}" class="my-3">Project
                                 Description</h3>
@@ -300,8 +298,8 @@
             <td class="w-50" th:unless="${allTasks == null && allTasks.isEmpty()}">
                 <h1>Tasks:</h1>
                 <!-- Task Row -->
-                <table class="table table-striped table-responsive-md" id="allTasks" th:each="task : ${allTasks}">
-                    <tr th:object="${task}" th:class="*{cleaner == null}? 'bg-warning' : 'bg-success'">
+                <table class="table table-striped table-responsive-md" id="allTasks" >
+                    <tr th:object="${task}" th:class="*{cleaner == null}? 'bg-warning' : 'bg-success'" th:each="task : ${allTasks}">
                         <td>
                             <p th:text="*{name}"></p>
                         </td>
@@ -317,14 +315,24 @@
                                th:text="*{cleaner.firstName + ' ' + cleaner.lastName}"></p>
                             <p th:if="*{cleaner == null}" th:text="'No cleaner asigned'"></p>
                         </td>
-                        <button type="button"
-                                class="assign-cleaner-to-task btn btn-primary"
-                                data-toggle="modal"
-                                data-target="#assignCleanerModal"
-                                th:data-id="${task.id}"
-                                th:data-task-region="${task.region.name}">
-                            <i class="fas fa-fa mx-1">Assign</i>
-                        </button>
+                        <td>
+                            <button type="button" th:if="${task.cleaner == null}"
+                                    class="assign-cleaner-to-task btn btn-success"
+                                    data-toggle="modal"
+                                    data-target="#assignCleanerModal"
+                                    th:data-id="${task.id}"
+                                    th:data-task-region="${task.region.name}">
+                                <i class="fas fa-fa mx-1">Assign</i>
+                            </button>
+                            <button type="button" th:unless="${task.cleaner == null}"
+                                    class="remove-cleaner-from-task btn btn-danger"
+                                    data-toggle="modal"
+                                    data-target="#unassignCleanerModal"
+                                    th:data-id="${task.id}">
+                                <i class="fas fa-fa mx-1">Unassign</i>
+                            </button>
+                        </td>
+
                         </td>
                     </tr>
                 </table>

@@ -281,161 +281,162 @@
     <div th:unless="${foundTasks == null}">
         <h1 class="col-lg-10" th:unless="${foundTasks.isEmpty()}">Your tasks are listed below</h1>
         <!-- Task Row -->
-        <table th:each="task : ${foundTasks}">
-            <tr th:object="${task}">
-                <td>
-                    <h3 th:text="${task.name}" class="my-3">Project Description</h3>
-                    <p th:text="${task.client.getEmail()}"></p>
-                    <h6 class="my-3">Project Details</h6>
-                </td>
-                <td>
-                    <!--            SHow/hide comments button-->
-                    <div th:unless="${task.comments.isEmpty()}"
-                         sec:authorize="hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN')">
-                        <button type="button"
-                                class="show-task-comments btn btn-primary"
-                                th:data-id="${task.id}">
-                            <i class="fas fa-fa mx-1">Show Comments</i>
-                        </button>
-                    </div>
-                    <!--  / show/hide comments-->
-                </td>
-                <td>
-                    <!--                    Add comment-->
-                    <div>
-                        <button type="button"
-                                class="add-task-comment btn btn-primary"
-                                data-toggle="modal"
-                                data-target="#addCommentModal"
-                                th:data-id="${task.id}">
-                            <i class="fas fa-fa mx-1">Comment</i>
-                        </button>
-                    </div>
-                    <!--                    / Add comment-->
-                </td>
-                <td>
-                    <div sec:authorize="hasRole('ADMIN')">
-                        <button type="button"
-                                class="open-delete-task btn btn-primary"
-                                data-toggle="modal"
-                                data-target="#deleteTaskModal"
-                                th:data-id="${task.id}">
-                            <i class="fas fa-trash mx-1"></i>
-                        </button>
-                    </div>
-                </td>
-                <td>
-
-                </td>
-            </tr>
-            <tr th:object="${task}">
-                <td colspan="4">
-                    <!--            comments div-->
-                    <div th:id="comment- + ${task.getId()}"
-                         th:style="${(formAddComment.taskId != null and formAddComment.taskId == task.id) || formAddCommentReply.taskId == task.id ? 'display:block' : 'display:none'}">
-                        <div class="card" th:each="taskComment : ${task.comments}">
-                            <div class="card-body" th:object="${taskComment}">
-                                <div class="row">
-                                    <div class="col-md-2">
-                                        <img src="https://image.ibb.co/jw55Ex/def_face.jpg"
-                                             class="img img-rounded img-fluid"/>
-                                        <p class="text-secondary text-center" th:text="${taskComment.createdOn}">Data
-                                            created</p>
-                                    </div>
-                                    <div>
-                                        <p class="float-left"
-                                           th:text="${taskComment.author.firstName + ' ' + taskComment.author.lastName}">
-                                            <strong>Creator</strong>
-                                        </p>
-                                        <br>
-                                        <hr>
-                                        <br>
-                                        <p th:text="${taskComment.description}">Description</p>
-
-                                        <!--                                        <p>-->
-                                        <!--                                            <a class="float-right btn btn-outline-primary ml-2"> <i class="fa fa-reply"></i>Reply</a>-->
-                                        <!--                    Add reply-->
+        <table>
+            <div th:object="${task}" th:each="task : ${foundTasks}">
+                <tr>
+                    <td>
+                        <h3 th:text="${task.name}" class="my-3">Project Description</h3>
+                        <p th:text="${task.client.getEmail()}"></p>
+                        <h6 class="my-3">Project Details</h6>
+                    </td>
+                    <td>
+                        <!--            SHow/hide comments button-->
+                        <div th:unless="${task.comments.isEmpty()}"
+                             sec:authorize="hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN')">
+                            <button type="button"
+                                    class="show-task-comments btn btn-primary"
+                                    th:data-id="${task.id}">
+                                <i class="fas fa-fa mx-1">Show Comments</i>
+                            </button>
+                        </div>
+                        <!--  / show/hide comments-->
+                    </td>
+                    <td>
+                        <!--                    Add comment-->
+                        <div>
+                            <button type="button"
+                                    class="add-task-comment btn btn-primary"
+                                    data-toggle="modal"
+                                    data-target="#addCommentModal"
+                                    th:data-id="${task.id}">
+                                <i class="fas fa-fa mx-1">Add Comment</i>
+                            </button>
+                        </div>
+                        <!--                    / Add comment-->
+                    </td>
+                    <td>
+                        <div sec:authorize="hasRole('ADMIN')">
+                            <button type="button"
+                                    class="open-delete-task btn btn-primary"
+                                    data-toggle="modal"
+                                    data-target="#deleteTaskModal"
+                                    th:data-id="${task.id}">
+                                <i class="fas fa-trash mx-1"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <!--            comments div-->
+                        <div th:id="comment- + ${task.getId()}"
+                             th:style="${(formAddComment.taskId != null and formAddComment.taskId == task.id) || formAddCommentReply.taskId == task.id ? 'display:block' : 'display:none'}">
+                            <div class="card" th:each="taskComment : ${task.comments}">
+                                <div class="card-body" th:object="${taskComment}">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <img src="https://image.ibb.co/jw55Ex/def_face.jpg"
+                                                 class="img img-rounded img-fluid"/>
+                                            <p class="text-secondary text-center" th:text="${taskComment.createdOn}">
+                                                Data
+                                                created</p>
+                                        </div>
                                         <div>
-                                            <button type="button"
-                                                    class="add-task-comment-reply btn btn-primary"
-                                                    data-toggle="modal"
-                                                    data-target="#addCommentReplyModal"
-                                                    th:data-comment-id="${taskComment.id}"
-                                                    th:data-task-comment-reply="${task.id}">
-                                                <i class="fas fa-fa mx-1">Reply</i>
-                                            </button>
-                                        </div>
-                                        <!--                    / Add reply-->
-                                        <!--                                        </p>-->
+                                            <p class="float-left"
+                                               th:text="${taskComment.author.firstName + ' ' + taskComment.author.lastName}">
+                                                <strong>Creator</strong>
+                                            </p>
+                                            <br>
+                                            <hr>
+                                            <br>
+                                            <p th:text="${taskComment.description}">Description</p>
 
-                                        <div th:unless="${taskComment.responses.isEmpty()}"
-                                             sec:authorize="hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN')">
-                                            <button type="button"
-                                                    class="show-comment-reply btn btn-primary"
-                                                    th:data-comment-id="${taskComment.id}">
-                                                <i class="fas fa-fa mx-1">Show Replies</i>
-                                            </button>
-                                        </div>
-                                        <div sec:authorize="hasRole('ADMIN')">
-                                            <button type="button"
-                                                    class="open-delete-coment btn btn-primary"
-                                                    data-toggle="modal"
-                                                    data-target="#deleteCommentModal"
-                                                    th:data-comment-id="${taskComment.getId()}">
-                                                <i class="fas fa-trash mx-1"></i>
-                                            </button>
+                                            <!--                                        <p>-->
+                                            <!--                                            <a class="float-right btn btn-outline-primary ml-2"> <i class="fa fa-reply"></i>Reply</a>-->
+                                            <!--                    Add reply-->
+                                            <div>
+                                                <button type="button"
+                                                        class="add-task-comment-reply btn btn-primary"
+                                                        data-toggle="modal"
+                                                        data-target="#addCommentReplyModal"
+                                                        th:data-comment-id="${taskComment.id}"
+                                                        th:data-task-comment-reply="${task.id}">
+                                                    <i class="fas fa-fa mx-1">Reply</i>
+                                                </button>
+                                            </div>
+                                            <!--                    / Add reply-->
+                                            <!--                                        </p>-->
+
+                                            <div th:unless="${taskComment.responses.isEmpty()}"
+                                                 sec:authorize="hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN')">
+                                                <button type="button"
+                                                        class="show-comment-reply btn btn-primary"
+                                                        th:data-comment-id="${taskComment.id}">
+                                                    <i class="fas fa-fa mx-1">Show Replies</i>
+                                                </button>
+                                            </div>
+                                            <div sec:authorize="hasRole('ADMIN')">
+                                                <button type="button"
+                                                        class="open-delete-coment btn btn-primary"
+                                                        data-toggle="modal"
+                                                        data-target="#deleteCommentModal"
+                                                        th:data-comment-id="${taskComment.getId()}">
+                                                    <i class="fas fa-trash mx-1"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <!--                        List replies-->
-                                <div class="card card-inner" th:id="comment-reply- + ${taskComment.id}"
-                                     th:style="${(formAddCommentReply.commentId != null and formAddCommentReply.commentId == taskComment.id) ? 'display:block' : 'display:none'}"
-                                     style="display: none">
-                                    <div class="card-body" th:each="response : ${taskComment.responses}">
-                                        <div class="row" th:object="${response}">
-                                            <div class="col-md-2">
-                                                <img src="https://image.ibb.co/jw55Ex/def_face.jpg"
-                                                     class="img img-rounded img-fluid"/>
-                                                <p class="text-secondary text-center" th:text="${response.createdOn}">
-                                                    Data
-                                                    created</p>
-                                            </div>
-                                            <div class="col-md-10">
-                                                <p><a href="https://maniruzzaman-akash.blogspot.com/p/contact.html"
-                                                      th:text="${response.author.firstName + ' ' + response.author.lastName}"><strong>Creator
-                                                </strong></a></p>
-                                                <p th:text="${response.responseDescription}">Description</p>
-                                                <p>
-                                                <div>
-                                                    <button type="button"
-                                                            class="add-task-comment-reply float-right btn btn-primary"
-                                                            data-toggle="modal"
-                                                            data-target="#addCommentReplyModal"
-                                                            th:data-comment-id="${taskComment.id}"
-                                                            th:data-task-comment-reply="${task.id}">
-                                                        <i class="fa fa-reply">Add Reply</i>
-                                                    </button>
+                                    <!--                        List replies-->
+                                    <div class="card card-inner" th:id="comment-reply- + ${taskComment.id}"
+                                         th:style="${(formAddCommentReply.commentId != null and formAddCommentReply.commentId == taskComment.id) ? 'display:block' : 'display:none'}"
+                                         style="display: none">
+                                        <div class="card-body" th:each="response : ${taskComment.responses}">
+                                            <div class="row" th:object="${response}">
+                                                <div class="col-md-2">
+                                                    <img src="https://image.ibb.co/jw55Ex/def_face.jpg"
+                                                         class="img img-rounded img-fluid"/>
+                                                    <p class="text-secondary text-center"
+                                                       th:text="${response.createdOn}">
+                                                        Data
+                                                        created</p>
                                                 </div>
-                                                <div sec:authorize="hasRole('ADMIN')">
-                                                    <button type="button"
-                                                            class="open-delete-reply btn btn-primary"
-                                                            data-toggle="modal"
-                                                            data-target="#deleteReplyModal"
-                                                            th:data-reply-id="${response.id}">
-                                                        <i class="fas fa-trash mx-1"></i>
-                                                    </button>
+                                                <div class="col-md-10">
+                                                    <p><a href="https://maniruzzaman-akash.blogspot.com/p/contact.html"
+                                                          th:text="${response.author.firstName + ' ' + response.author.lastName}"><strong>Creator
+                                                    </strong></a></p>
+                                                    <p th:text="${response.responseDescription}">Description</p>
+                                                    <p>
+                                                    <div>
+                                                        <button type="button"
+                                                                class="add-task-comment-reply float-right btn btn-primary"
+                                                                data-toggle="modal"
+                                                                data-target="#addCommentReplyModal"
+                                                                th:data-comment-id="${taskComment.id}"
+                                                                th:data-task-comment-reply="${task.id}">
+                                                            <i class="fa fa-reply">Add Reply</i>
+                                                        </button>
+                                                    </div>
+                                                    <div sec:authorize="hasRole('ADMIN')">
+                                                        <button type="button"
+                                                                class="open-delete-reply btn btn-primary"
+                                                                data-toggle="modal"
+                                                                data-target="#deleteReplyModal"
+                                                                th:data-reply-id="${response.id}">
+                                                            <i class="fas fa-trash mx-1"></i>
+                                                        </button>
+                                                    </div>
+                                                    </p>
                                                 </div>
-                                                </p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <!--  /comments div-->
-                </td>
-            </tr>
+                        <!--  /comments div-->
+                    </td>
+                </tr>
+            </div>
         </table>
         <!-- /.row -->
     </div>

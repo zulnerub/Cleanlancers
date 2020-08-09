@@ -25,8 +25,8 @@
             <label for="taskRegion">Region</label>
             <select th:field="*{region}" name="taskRegion" id="taskRegion">
                 <option th:value="null" th:text="'Please select a region'"></option>
-                <th:block th:each="reg : ${regs}">
-                    <option  th:value="${reg.name}" th:text="${reg.name}"></option>
+                <th:block th:each="region : ${regions}">
+                    <option  th:value="${region.name}" th:text="${region.name}"></option>
                 </th:block>
             </select>
             <th:block th:each="e : ${#fields.errors('region')}">

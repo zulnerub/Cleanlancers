@@ -15,9 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -26,12 +24,14 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsServiceImpl userDetailsService;
     private final RegionServiceImpl regionService;
+    private final RoleServiceImpl roleService;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, UserDetailsServiceImpl userDetailsService, RegionServiceImpl regionService) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, UserDetailsServiceImpl userDetailsService, RegionServiceImpl regionService, RoleServiceImpl roleService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
         this.regionService = regionService;
+        this.roleService = roleService;
     }
 
     @Override
@@ -46,6 +46,19 @@ public class UserServiceImpl implements UserService {
                         .contains("ROLE_CLEANER"))
                 .collect(Collectors.toList());
 
+    }
+
+    @Override
+    public List<UserServiceDTO> searchCleaners(String email, String firstName, String lastName, String regionName) {
+        return this.userRepository.getCleanersBySearchParams(email, firstName, lastName,  regionName).orElse(new ArrayList<>())
+                .stream()
+                .filter(ue -> ue.getRoles()
+                        .stream()
+                        .map(RoleEntity::getName)
+                        .collect(Collectors.toList())
+                        .contains("ROLE_CLEANER"))
+                .map(UserMapper.INSTANCE::mapUserEntityToUserServiceModel)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -70,9 +83,12 @@ public class UserServiceImpl implements UserService {
         }
 
         if (this.userRepository.count() == 0) {
-            userServiceDTO.setRoles(List.of(new RoleEntity("ROLE_ADMIN")));
+            RoleEntity adminRole = new RoleEntity("ROLE_ADMIN");
+            this.roleService.saveRole(adminRole);
+            userServiceDTO.setRoles(List.of(adminRole));
         } else {
-            userServiceDTO.setRoles(List.of(new RoleEntity(userRegisterDTO.getRole())));
+            RoleEntity userRole = this.roleService.findRoleByName(userRegisterDTO.getRole());
+            userServiceDTO.setRoles(List.of(userRole));
         }
 
         userServiceDTO.setEmail(userRegisterDTO.getEmail());
@@ -109,13 +125,7 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    @Override
-    public List<UserServiceDTO> searchCleaners(String email, String firstName, String lastName, int numberOfTasks, String regionName) {
-        return this.userRepository.getCleanersBySearchParams(email, firstName, lastName, numberOfTasks, regionName).orElse(new ArrayList<>())
-                .stream()
-                .map(UserMapper.INSTANCE::mapUserEntityToUserServiceModel)
-                .collect(Collectors.toList());
-    }
+
 
     @Override
     public List<String> filterByUserEmail(String userEmail) {

@@ -1,6 +1,7 @@
 package com.simo.web.administration.web;
 
 import com.simo.web.task.model.TaskEntity;
+import com.simo.web.task.model.mapper.TaskMapper;
 import com.simo.web.task.service.TaskServiceImpl;
 import com.simo.web.user.model.AssignCleanerForm;
 import com.simo.web.user.model.UserEntity;
@@ -11,11 +12,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,17 +34,29 @@ public class AdministrationController {
         this.taskService = taskService;
     }
 
+    @PostMapping("/unassign-cleaner")
+    public String unassignCleaner(@ModelAttribute("unassignTaskId") Long unassignTaskId) {
+        TaskEntity task = this.taskService.findById(unassignTaskId);
+        task.setCleaner(null);
+        this.taskService.updatedTask(task);
+
+        return "redirect:/administration";
+    }
+
     @PostMapping("/assign-cleaner")
-    public String assignCleanerToTask(@Valid @ModelAttribute("assignCleanerForm") AssignCleanerForm assignCleanerForm,
-                                      BindingResult bindingResult,
-                                      RedirectAttributes redirectAttributes) {
+    public ModelAndView assignCleanerToTask(@Valid @ModelAttribute("assignCleanerForm") AssignCleanerForm assignCleanerForm,
+                                            BindingResult bindingResult,
+                                            RedirectAttributes redirectAttributes,
+                                            ModelAndView modelAndView,
+                                            Principal principal) {
 
         if (!this.userService.existUser(assignCleanerForm.getAssignedUsername())) {
             redirectAttributes.addFlashAttribute("userNotFound", "true");
             redirectAttributes.addFlashAttribute("assignCleanerForm", assignCleanerForm);
 
-            return "redirect:/administration";
-        }else {
+            modelAndView.setViewName("redirect:/administration");
+            return modelAndView;
+        } else {
             redirectAttributes.addFlashAttribute("userNotFound", "false");
         }
 
@@ -52,18 +66,29 @@ public class AdministrationController {
                     .addFlashAttribute(BindingResult.MODEL_KEY_PREFIX + "assignCleanerForm",
                             bindingResult);
 
-            return "redirect:/administration";
+            modelAndView.setViewName("redirect:/administration");
+            return modelAndView;
         }
 
         UserEntity cleaner = this.userService.findUserByUsername(assignCleanerForm.getAssignedUsername());
         TaskEntity task = this.taskService.findById(assignCleanerForm.getTaskId());
+
         cleaner.getCleanerTasks().add(task);
         task.setCleaner(cleaner);
+
         this.userService.updatedCleanerWithNewTasks(cleaner);
-        this.taskService.updatedTaskWithCleaner(task);
+        this.taskService.updatedTask(task);
+
+        modelAndView.addObject("adminUsername", principal.getName());
+        modelAndView.addObject("cleanerUsername", cleaner.getEmail());
+        modelAndView.addObject("clientUsername", task.getClient().getEmail());
+        modelAndView.addObject("taskName", task.getName());
+        modelAndView.addObject("regionName", task.getRegion().getName());
+
+        modelAndView.setViewName("redirect:/administration");
 
 
-        return "redirect:/administration";
+        return modelAndView;
     }
 
     @GetMapping(value = {"/cleaners-by-email/{taskRegion}/{cleanerEmail}"})
@@ -137,7 +162,6 @@ public class AdministrationController {
                     userSearchDTO.getEmail(),
                     userSearchDTO.getFirstName(),
                     userSearchDTO.getLastName(),
-                    userSearchDTO.getNumberOfTasks(),
                     userSearchDTO.getWorkArea()));
         } else {
             userSearchDTO = new UserSearchDTO();
@@ -145,14 +169,14 @@ public class AdministrationController {
         }
 
 
-        if (model.containsAttribute("userNotFound") && model.getAttribute("userNotFound").equals("true")){
+        if (model.containsAttribute("userNotFound") && model.getAttribute("userNotFound").equals("true")) {
             redirectAttributes.addFlashAttribute("assignCleanerForm", model.getAttribute("assignCleanerForm"));
-        }else{
+        } else {
             AssignCleanerForm assignCleanerForm = new AssignCleanerForm();
             model.addAttribute("assignCleanerForm", assignCleanerForm);
         }
 
-        model.addAttribute("allTasks", this.taskService.allTasks());
+        model.addAttribute("allTasks", this.taskService.findAllOrderByCleanerAssigned());
         model.addAttribute("searchForm", userSearchDTO);
 
         return "administration/task-delegation";
@@ -178,7 +202,6 @@ public class AdministrationController {
                         userSearchDTO.getEmail(),
                         userSearchDTO.getFirstName(),
                         userSearchDTO.getLastName(),
-                        userSearchDTO.getNumberOfTasks(),
                         userSearchDTO.getWorkArea());
 
 

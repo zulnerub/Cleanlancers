@@ -11,7 +11,6 @@ public class UserSearchDTO {
     private String email;
     private String firstName;
     private String lastName;
-    private int numberOfTasks;
     private String workArea;
 
 }

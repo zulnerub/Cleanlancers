@@ -42,6 +42,11 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public List<TaskEntity> findAllOrderByCleanerAssigned() {
+        return this.taskRepository.findAllOrderByCleanerAssigned().orElse(null);
+    }
+
+    @Override
     public List<TaskServiceDTO> searchTasks(String taskName, String clientFirstName, String ClientLastName) {
 
         List<TaskEntity> taskEntities = this.taskRepository
@@ -98,7 +103,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void updatedTaskWithCleaner(TaskEntity task) {
+    public void updatedTask(TaskEntity task) {
         this.taskRepository.save(task);
     }
 }

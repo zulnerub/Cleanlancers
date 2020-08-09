@@ -36,5 +36,8 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
             "WHERE t.client.lastName like CONCAT('%', :clientLastName, '%')")
     Optional<List<String>> filterByClientLastName(@Param("clientLastName") String clientLastName);
 
+    @Query(value = "SELECT t FROM TaskEntity t ORDER BY t.cleaner nulls first ")
+    Optional<List<TaskEntity>> findAllOrderByCleanerAssigned ();
+
 
 }

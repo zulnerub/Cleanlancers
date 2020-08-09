@@ -18,12 +18,11 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
             "WHERE u.email like CONCAT('%', :email, '%') " +
             "AND u.firstName like CONCAT('%', :firstName, '%') " +
             "AND u.lastName like CONCAT('%', :lastName, '%') " +
-            "AND u.cleanerTasks.size = :numberOfTasks " +
-            "AND u.region.name like CONCAT('%', :workArea, '%') ")
+            "AND u.region.name like CONCAT('%', :workArea, '%') " +
+            "ORDER BY u.cleanerTasks.size ASC ")
     Optional<List<UserEntity>> getCleanersBySearchParams(@Param("email") String email,
                                                          @Param("firstName") String firstName,
                                                          @Param("lastName") String lastName,
-                                                         @Param("numberOfTasks") int numberOfTasks,
                                                          @Param("workArea") String workArea);
 
     @Query(value = "SELECT u FROM UserEntity  u " +

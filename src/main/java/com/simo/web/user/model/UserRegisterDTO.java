@@ -2,7 +2,6 @@ package com.simo.web.user.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.simo.web.common.validator.FieldMatch;
-import com.simo.web.region.model.RegionServiceDTO;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
